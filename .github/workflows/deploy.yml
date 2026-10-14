@@ -1,0 +1,32 @@
+# Déploiement automatique : à chaque push sur main, GitHub rejoint le tailnet
+# puis demande à Coolify de reconstruire et redéployer le site.
+name: deploy
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-pandora-site
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Rejoindre le tailnet
+        uses: tailscale/github-action@v3
+        with:
+          oauth-client-id: ${{ secrets.TS_OAUTH_CLIENT_ID }}
+          oauth-secret: ${{ secrets.TS_OAUTH_SECRET }}
+          tags: tag:ci
+
+      - name: Déclencher le déploiement dans Coolify
+        env:
+          COOLIFY_TOKEN: ${{ secrets.COOLIFY_TOKEN }}
+          COOLIFY_APP_UUID: ${{ secrets.COOLIFY_APP_UUID }}
+        run: |
+          curl --fail --silent --show-error \
+            -H "Authorization: Bearer $COOLIFY_TOKEN" \
+            "http://100.79.86.29:8000/api/v1/deploy?uuid=$COOLIFY_APP_UUID&force=true"
