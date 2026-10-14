@@ -429,7 +429,11 @@ new GLTFLoader().load(
       o.material.envMapIntensity = 0.5;
       o.material.needsUpdate = true;
     });
-    holder.add(model);
+    // Aizen est retourné face à la caméra, centré sur son axe
+    const facing = new THREE.Group();
+    facing.rotation.y = Math.PI;
+    facing.add(model);
+    holder.add(facing);
     aizenModel = model;
 
 
@@ -532,7 +536,8 @@ function frame() {
   // Un tour complet sur toute la page, en plus du léger balancement
   holder.rotation.y = (reduce ? 0 : Math.sin(t * 0.4) * 0.25) + scrollRatio * Math.PI * 2;
   holder.rotation.x = Math.sin(t * 0.5) * 0.05;
-  holder.position.y = (reduce ? 0 : Math.sin(t * 0.8) * 0.1) - scrollRatio * 1.0;
+  // Personnage placé un peu sous le titre PANDORA
+  holder.position.y = (reduce ? 0 : Math.sin(t * 0.8) * 0.1) - scrollRatio * 1.0 - 0.6;
   // Centré pendant l'intro, puis glisse à droite sur ordinateur
   const targetX = introDone && desktop ? 2.1 : 0;
   holder.position.x += (targetX - holder.position.x) * 0.04;
