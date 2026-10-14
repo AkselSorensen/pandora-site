@@ -321,6 +321,7 @@ const canvas = document.getElementById('scene');
 const intro = document.getElementById('intro');
 let introDone = false;
 let weapon = null;
+let aizenModel = null;
 
 /* Fin de l'intro : le site apparaît */
 function finishIntro() {
@@ -328,6 +329,8 @@ function finishIntro() {
   introDone = true;
   intro.classList.add('hide');
   document.body.classList.remove('intro');
+  // Après l'intro, Aizen disparaît et seule l'épée reste sur la page
+  if (aizenModel) aizenModel.visible = false;
   if (weapon) weapon.visible = true;
   setTimeout(() => intro.remove(), 1300);
 }
@@ -402,6 +405,7 @@ new GLTFLoader().load(
       o.material.needsUpdate = true;
     });
     holder.add(model);
+    aizenModel = model;
 
 
     // Intro : stay_show puis skill_3_3 jouées une fois, puis stay_show en boucle
