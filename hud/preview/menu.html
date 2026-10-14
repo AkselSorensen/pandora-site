@@ -97,10 +97,10 @@
             /* Fermeture : zone transparente posée sur la croix du cadre */
             #close_menu {
                 position: absolute;
-                right: 40px;
-                top: 30px;
-                width: 30px;
-                height: 30px;
+                right: 24px;
+                top: 18px;
+                width: 56px;
+                height: 56px;
                 padding: 0;
                 border: none;
                 background: transparent;
@@ -121,6 +121,7 @@
                 <button class="option" type="button">Missions</button>
                 <button class="option" type="button">Division</button>
                 <button class="option" type="button">Aide des commandes</button>
+                <button class="option" id="close_option" type="button">Fermer</button>
             </div>
         </div>
 
@@ -130,8 +131,14 @@
             document.getElementById("open_menu").addEventListener("click", function () {
                 menu.classList.add("open");
             });
-            document.getElementById("close_menu").addEventListener("click", function () {
+            // Fermer : la croix du cadre, le bouton « Fermer » et la touche Échap
+            function closeMenu() {
                 menu.classList.remove("open");
+            }
+            document.getElementById("close_menu").addEventListener("click", closeMenu);
+            document.getElementById("close_option").addEventListener("click", closeMenu);
+            document.addEventListener("keydown", function (e) {
+                if (e.key === "Escape") closeMenu();
             });
         </script>
     </body>
