@@ -505,7 +505,8 @@ function frame() {
   if (ulqMixer) ulqMixer.update(dt);
   const desktop = window.innerWidth > 860;
   // Le masque tourne lentement et tourne plus vite au défilement
-  holder.rotation.y = reduce ? 0 : Math.sin(t * 0.4) * 0.25;
+  // Un tour complet sur toute la page, en plus du léger balancement
+  holder.rotation.y = (reduce ? 0 : Math.sin(t * 0.4) * 0.25) + scrollRatio * Math.PI * 2;
   holder.rotation.x = Math.sin(t * 0.5) * 0.05;
   holder.position.y = (reduce ? 0 : Math.sin(t * 0.8) * 0.1) - scrollRatio * 1.0;
   // Centré pendant l'intro, puis glisse à droite sur ordinateur
