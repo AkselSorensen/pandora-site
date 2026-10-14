@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="fr">
+    <head>
+        <meta charset="utf-8">
+        <title>Aperçu du HUD Bleach</title>
+        <link rel="stylesheet" href="../Client/UI/style.css">
+        <style>
+            /* Fond de test pour voir la transparence du HUD */
+            body { background: linear-gradient(180deg, #1b2440, #0b0f1a); }
+        </style>
+        <script>
+            // Faux objet Events, pour faire tourner le HUD hors de nanos world
+            window.__handlers = {};
+            window.Events = {
+                Subscribe: function (name, fn) { window.__handlers[name] = fn; },
+                Call: function () {}
+            };
+        </script>
+        <script src="../Client/UI/index.js"></script>
+    </head>
+    <body>
+        <div id="player_card">
+            <div class="division" id="player_division">DIVISION —</div>
+            <div class="name" id="player_name">Shinigami</div>
+        </div>
+        <div id="compass">
+            <div class="strip"><span id="compass_strip">N · · E · · S · · O · · N</span></div>
+            <div class="marker"></div>
+        </div>
+        <div id="feed"></div>
+        <div id="crosshair"><span></span><span></span><span></span><span></span></div>
+        <div id="health_container">
+            <span class="kanji">霊圧</span>
+            <div class="bar"><div id="health_fill"></div></div>
+            <span id="health_current">100</span>
+        </div>
+        <div id="weapon_ammo_container">
+            <span class="kanji">残弾</span>
+            <span id="weapon_ammo_clip">30</span>
+            <span id="weapon_ammo_bag">/ 1000</span>
+        </div>
+
+        <script>
+            // Simulation : la vie baisse, les munitions diminuent, la boussole tourne, des événements arrivent
+            let hp = 100, clip = 30, heading = 0, tick = 0;
+            const h = window.__handlers;
+            setInterval(function () {
+                tick++;
+                hp = hp > 0 ? hp - 2 : 100;
+                clip = clip > 0 ? clip - 1 : 30;
+                heading = (heading + 3) % 360;
+                if (h.UpdateHealth) h.UpdateHealth(hp);
+                if (h.UpdateWeaponAmmo) h.UpdateWeaponAmmo(true, clip, 1000);
+                if (h.UpdateCompass) h.UpdateCompass(heading);
+                if (tick % 8 === 0 && h.AddFeed) h.AddFeed("Hollow vaincu au Rukongai", "kill");
+                if (tick % 12 === 0 && h.AddFeed) h.AddFeed("Raid de Hollows dans 5 min", "alert");
+            }, 400);
+            if (h.UpdatePlayer) h.UpdatePlayer("Shinigami", 4);
+        </script>
+    </body>
+</html>
