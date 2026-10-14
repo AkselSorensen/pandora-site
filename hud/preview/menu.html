@@ -270,6 +270,8 @@
                 menu.classList.add("rolling");
                 result.classList.remove("show");
                 faces.forEach(f => f.classList.remove("win"));
+                // Force le recalcul avant de tourner, sinon le navigateur saute la transition
+                void prism.offsetWidth;
 
                 const target = Math.floor(Math.random() * 6);
                 // Angle final qui met la face choisie devant : on ajoute 5 tours complets
