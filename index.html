@@ -7,6 +7,8 @@
 <meta name="description" content="Pandora Bleach : serveur roleplay nanos world inspiré de Bleach. Deviens Shinigami, combats les Hollows et protège le monde des vivants.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Shippori+Mincho+B1:wght@500;700;800&family=IBM+Plex+Sans:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
 <script type="importmap">
 {
   "imports": {
@@ -255,7 +257,8 @@
   <div class="wrap">
     <p class="mono label reveal">EN JEU</p>
     <h2 class="display reveal">Vois le serveur en action.</h2>
-    <video class="reveal" src="video.mp4" controls muted loop playsinline preload="metadata" style="width: 100%; aspect-ratio: 16 / 9; border: 1px solid var(--line); background: #000; object-fit: cover;" aria-label="Capture de gameplay du serveur Pandora Bleach"></video>
+    <div class="reveal" style="width: 100%; aspect-ratio: 16 / 9; border: 1px dashed var(--line); display: flex; align-items: center; justify-content: center; color: var(--dim); font-family: 'IBM Plex Mono', monospace; font-size: 13px;">Capture de gameplay à venir</div>
+    <video id="gameplay" muted loop playsinline preload="metadata" style="display: none; width: 100%; aspect-ratio: 16 / 9; background: #000; object-fit: cover;" aria-label="Capture de gameplay du serveur Pandora Bleach"></video>
   </div>
 </section>
 
@@ -363,10 +366,37 @@ document.getElementById('skip').addEventListener('click', finishIntro);
 setTimeout(finishIntro, 20000); // sécurité : jamais bloqué plus de 20 s
 
 /* ---------- Apparitions au défilement ---------- */
-const io = new IntersectionObserver((entries) => {
-  for (const e of entries) if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); }
-}, { threshold: 0.15 });
-document.querySelectorAll('.reveal').forEach((el) => io.observe(el));
+/* Transitions GSAP : apparition au défilement */
+const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+if (window.gsap && window.ScrollTrigger && !reduceMotion) {
+  gsap.registerPlugin(ScrollTrigger);
+  gsap.utils.toArray('.reveal').forEach((el) => {
+    gsap.fromTo(el,
+      { opacity: 0, y: 70, filter: 'blur(8px)' },
+      { opacity: 1, y: 0, filter: 'blur(0px)', duration: 1.2, ease: 'power3.out',
+        scrollTrigger: { trigger: el, start: 'top 88%', once: true } });
+  });
+  // Le titre du héros se lève au chargement
+  gsap.from('.hero h1', { opacity: 0, y: 80, duration: 1.4, ease: 'power4.out', delay: 0.2 });
+  // Les dunes de Hueco Mundo montent légèrement au défilement
+  gsap.fromTo('#hueco > div:first-child',
+    { yPercent: 12 },
+    { yPercent: -6, ease: 'none', scrollTrigger: { trigger: '#hueco', start: 'top bottom', end: 'bottom top', scrub: true } });
+} else {
+  document.querySelectorAll('.reveal').forEach((el) => el.classList.add('in'));
+}
+
+/* Vidéo de gameplay : lecture automatique muette quand elle entre dans l'écran */
+const gameplay = document.getElementById('gameplay');
+if (gameplay) {
+  const vio = new IntersectionObserver((entries) => {
+    for (const e of entries) {
+      if (e.isIntersecting) gameplay.play().catch(() => {});
+      else gameplay.pause();
+    }
+  }, { threshold: 0.5 });
+  vio.observe(gameplay);
+}
 
 /* ---------- Scène 3D ---------- */
 let renderer;
