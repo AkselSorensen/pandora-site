@@ -78,3 +78,116 @@ html, body {
     font-size: 16px;
     color: var(--spirit);
 }
+
+/* Carte du joueur : haut gauche */
+#player_card {
+    position: absolute;
+    left: 32px;
+    top: 32px;
+    padding: 12px 18px;
+    background: var(--panel);
+    border-left: 3px solid var(--hollow);
+}
+
+#player_card .division {
+    font-size: 12px;
+    letter-spacing: 0.12em;
+    color: var(--spirit);
+}
+
+#player_card .name {
+    font-size: 20px;
+    font-weight: 800;
+    margin-top: 4px;
+}
+
+/* Boussole : haut centre */
+#compass {
+    position: absolute;
+    left: 50%;
+    top: 32px;
+    transform: translateX(-50%);
+    width: 360px;
+    height: 36px;
+    overflow: hidden;
+    background: var(--panel);
+    border-top: 2px solid var(--spirit);
+}
+
+#compass .strip {
+    position: absolute;
+    left: 50%;
+    top: 0;
+    width: 400px;
+    margin-left: -200px;
+    text-align: center;
+    font-size: 16px;
+    font-weight: 800;
+    line-height: 36px;
+    letter-spacing: 0.3em;
+}
+
+#compass_strip {
+    display: inline-block;
+    white-space: nowrap;
+    transition: transform 0.15s linear;
+}
+
+#compass .marker {
+    position: absolute;
+    left: 50%;
+    bottom: 0;
+    width: 2px;
+    height: 8px;
+    margin-left: -1px;
+    background: var(--ivory);
+}
+
+/* Fil d'événements : haut droite */
+#feed {
+    position: absolute;
+    right: 32px;
+    top: 32px;
+    width: 300px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    align-items: flex-end;
+}
+
+.feed_line {
+    padding: 6px 12px;
+    background: var(--panel);
+    font-size: 14px;
+    border-right: 3px solid var(--spirit);
+    animation: feedIn 0.3s ease;
+}
+
+.feed_line.kill { border-right-color: var(--hollow); }
+.feed_line.alert { border-right-color: var(--hollow); color: #f08a7a; }
+
+@keyframes feedIn {
+    from { opacity: 0; transform: translateX(20px); }
+    to   { opacity: 1; transform: translateX(0); }
+}
+
+/* Réticule : centre */
+#crosshair {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 24px;
+    height: 24px;
+    margin: -12px 0 0 -12px;
+}
+
+#crosshair span {
+    position: absolute;
+    background: var(--ivory);
+    opacity: 0.85;
+}
+
+#crosshair span:nth-child(1) { left: 11px; top: 0; width: 2px; height: 7px; }
+#crosshair span:nth-child(2) { left: 11px; bottom: 0; width: 2px; height: 7px; }
+#crosshair span:nth-child(3) { top: 11px; left: 0; width: 7px; height: 2px; }
+#crosshair span:nth-child(4) { top: 11px; right: 0; width: 7px; height: 2px; }

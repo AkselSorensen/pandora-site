@@ -6,6 +6,24 @@
         <script src="index.js"></script>
     </head>
     <body>
+        <!-- Carte du joueur : haut gauche -->
+        <div id="player_card">
+            <div class="division" id="player_division">DIVISION —</div>
+            <div class="name" id="player_name">Shinigami</div>
+        </div>
+
+        <!-- Boussole : haut centre -->
+        <div id="compass">
+            <div class="strip"><span id="compass_strip">N · · E · · S · · O · · N</span></div>
+            <div class="marker"></div>
+        </div>
+
+        <!-- Fil d'événements : haut droite -->
+        <div id="feed"></div>
+
+        <!-- Réticule : centre -->
+        <div id="crosshair"><span></span><span></span><span></span><span></span></div>
+
         <!-- Reiatsu (vie) : bas gauche -->
         <div id="health_container">
             <span class="kanji">霊圧</span>

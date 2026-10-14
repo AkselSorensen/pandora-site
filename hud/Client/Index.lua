@@ -70,3 +70,21 @@ end
 function UpdateHealth(health)
     main_hud:CallEvent("UpdateHealth", health)
 end
+
+-- Carte du joueur : nom et division (à brancher sur les vraies données du joueur)
+function UpdatePlayer(name, division)
+    main_hud:CallEvent("UpdatePlayer", name, division)
+end
+
+-- Boussole : cap en degrés (0 = Nord)
+function UpdateCompass(heading)
+    main_hud:CallEvent("UpdateCompass", heading)
+end
+
+-- Fil d'événements : texte et type ("kill", "alert" ou "info")
+function AddFeed(text, kind)
+    main_hud:CallEvent("AddFeed", text, kind)
+end
+
+-- Valeurs de départ pour la carte du joueur (remplace-les par le vrai nom et la vraie division)
+UpdatePlayer("Shinigami", 4)
