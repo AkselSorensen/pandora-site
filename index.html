@@ -149,16 +149,6 @@
   footer .wrap { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 16px; }
   footer .mono { color: var(--dim); }
 
-  /* Grand titre en fond, derrière le personnage (effet de profondeur au défilement) */
-  #giant {
-    position: fixed; left: 0; right: 0; top: 50%; z-index: 0; pointer-events: none;
-    transform: translateY(calc(-50% + var(--p, 0px)));
-    text-align: center; white-space: nowrap;
-    font-family: "Shippori Mincho B1", serif; font-weight: 800; line-height: 1;
-    font-size: clamp(90px, 22vw, 340px); letter-spacing: 0.04em;
-    color: var(--paper); opacity: 0.9;
-  }
-
   /* Logo animé de l'intro */
   .intro-logo {
     position: absolute; top: 12vh; left: 0; right: 0; margin: 0; text-align: center;
@@ -209,8 +199,6 @@
 </style>
 </head>
 <body class="intro">
-
-<div id="giant" aria-hidden="true">PANDORA</div>
 
 <canvas id="scene" aria-hidden="true"></canvas>
 
@@ -494,10 +482,7 @@ new GLTFLoader().load(
 let scrollRatio = 0;
 function updateScroll() {
   const max = document.documentElement.scrollHeight - window.innerHeight;
-  scrollRatio = max > 0 ? window.scrollY / max : 0;
-  // Le grand titre glisse plus lentement que le reste : effet de profondeur
-  document.body.style.setProperty('--p', `${window.scrollY * 0.3}px`);
-}
+  scrollRatio = max > 0 ? window.scrollY / max : 0;}
 window.addEventListener('scroll', updateScroll, { passive: true });
 updateScroll();
 
