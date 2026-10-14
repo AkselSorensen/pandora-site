@@ -301,6 +301,44 @@
   </div>
 </section>
 
+<section id="hud" class="section">
+  <div class="wrap">
+    <p class="mono label reveal">INTERFACE</p>
+    <h2 class="display reveal">Ce que tu vois en jeu.</h2>
+    <div class="reveal" style="position: relative; width: 100%; aspect-ratio: 16 / 9; border: 1px solid var(--line); background: radial-gradient(ellipse at 50% 40%, #1b2440, #0b0f1a 70%); overflow: hidden; font-family: 'IBM Plex Sans', sans-serif;">
+      <!-- Mini-carte -->
+      <div style="position: absolute; top: 24px; right: 24px; width: 180px; height: 180px; border-radius: 50%; border: 1px solid rgba(159,183,209,0.5); background: rgba(11,15,26,0.7); overflow: hidden;">
+        <div style="position: absolute; left: 50%; top: 50%; width: 10px; height: 10px; margin: -5px; border-radius: 50%; background: #efeae0; box-shadow: 0 0 12px #efeae0;"></div>
+        <div style="position: absolute; left: 30%; top: 60%; width: 6px; height: 6px; border-radius: 50%; background: #9fb7d1;"></div>
+        <div style="position: absolute; left: 68%; top: 34%; width: 6px; height: 6px; border-radius: 50%; background: #9fb7d1;"></div>
+        <div style="position: absolute; left: 60%; top: 70%; width: 6px; height: 6px; border-radius: 50%; background: #e0562d;"></div>
+      </div>
+      <!-- Carte joueur -->
+      <div style="position: absolute; top: 24px; left: 24px; width: 260px; padding: 16px; background: rgba(11,15,26,0.7); border: 1px solid rgba(159,183,209,0.25);">
+        <div style="display: flex; justify-content: space-between; font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: #9fb7d1;"><span>DIVISION 4</span><span>RANG 2</span></div>
+        <div style="margin-top: 8px; font-size: 18px; font-weight: 600; color: #efeae0;">Kisuke_Test</div>
+        <div style="margin-top: 14px; height: 8px; background: rgba(239,234,224,0.12);"><div style="width: 72%; height: 100%; background: #e0562d;"></div></div>
+        <div style="margin-top: 10px; height: 6px; background: rgba(239,234,224,0.12);"><div style="width: 55%; height: 100%; background: #9fb7d1;"></div></div>
+      </div>
+      <!-- Réticule -->
+      <div style="position: absolute; left: 50%; top: 50%; width: 36px; height: 36px; margin: -18px; border: 1px solid rgba(239,234,224,0.7); border-radius: 50%;"></div>
+      <div style="position: absolute; left: 50%; top: 50%; width: 4px; height: 4px; margin: -2px; border-radius: 50%; background: #efeae0;"></div>
+      <!-- Chat -->
+      <div style="position: absolute; left: 24px; bottom: 24px; width: 360px; font-family: 'IBM Plex Mono', monospace; font-size: 12px; line-height: 1.8; color: #c4cfdf;">
+        <div><span style="color: #9fb7d1;">[Soul Society]</span> Ichigo_RP : Le Hollow arrive au Rukongai.</div>
+        <div><span style="color: #9fb7d1;">[Équipe]</span> Unohana : Je prends les blessés.</div>
+        <div><span style="color: #e0562d;">[Alerte]</span> Raid de Hollows dans 5 min.</div>
+      </div>
+      <!-- Jauge de reiatsu -->
+      <div style="position: absolute; right: 24px; bottom: 24px; width: 240px; font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: #9fb7d1;">
+        <div style="display: flex; justify-content: space-between;"><span>REIATSU</span><span>840 / 1000</span></div>
+        <div style="margin-top: 8px; height: 10px; background: rgba(239,234,224,0.12);"><div style="width: 84%; height: 100%; background: linear-gradient(90deg, #9fb7d1, #efeae0);"></div></div>
+      </div>
+      <p class="mono" style="position: absolute; left: 50%; bottom: 8px; transform: translateX(-50%); margin: 0; font-size: 11px; color: #6b7891;">Maquette d'interface, non issue de nanos world</p>
+    </div>
+  </div>
+</section>
+
 <section id="agenda" class="section">
   <div class="wrap">
     <p class="mono label reveal">AGENDA</p>
