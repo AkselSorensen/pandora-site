@@ -122,7 +122,6 @@
                 <button class="option" type="button">Missions</button>
                 <button class="option" type="button">Division</button>
                 <button class="option" type="button">Aide des commandes</button>
-                <button class="option" id="close_option" type="button">Fermer</button>
             </div>
         </div>
 
@@ -137,7 +136,6 @@
                 menu.classList.remove("open");
             }
             document.getElementById("close_menu").addEventListener("click", closeMenu);
-            document.getElementById("close_option").addEventListener("click", closeMenu);
             document.addEventListener("keydown", function (e) {
                 if (e.key === "Escape") closeMenu();
             });
