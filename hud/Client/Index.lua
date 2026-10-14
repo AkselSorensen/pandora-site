@@ -88,3 +88,23 @@ end
 
 -- Valeurs de départ pour la carte du joueur (remplace-les par le vrai nom et la vraie division)
 UpdatePlayer("Shinigami", 4)
+
+-- Invite d'action : touche et texte affichés sous le réticule
+function ShowPrompt(key, text)
+    main_hud:CallEvent("ShowPrompt", key, text)
+end
+
+-- Cache l'invite d'action
+function HidePrompt()
+    main_hud:CallEvent("HidePrompt")
+end
+
+-- Chat : auteur et message
+function AddChat(author, text)
+    main_hud:CallEvent("AddChat", author, text)
+end
+
+-- Bandeau de mission : titre et progression (0 à 100)
+function UpdateMission(title, progress)
+    main_hud:CallEvent("UpdateMission", title, progress)
+end

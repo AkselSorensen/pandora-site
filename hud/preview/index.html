@@ -19,6 +19,10 @@
         <script src="../Client/UI/index.js"></script>
     </head>
     <body>
+        <div id="mission">
+            <div class="mission_title" id="mission_title">Aucune mission</div>
+            <div class="mission_bar"><div id="mission_fill"></div></div>
+        </div>
         <div id="player_card">
             <div class="division" id="player_division">DIVISION —</div>
             <div class="name" id="player_name">Shinigami</div>
@@ -28,7 +32,12 @@
             <div class="marker"></div>
         </div>
         <div id="feed"></div>
+        <div id="prompt" class="hidden">
+            <span class="key" id="prompt_key">E</span>
+            <span id="prompt_text">Ramasser</span>
+        </div>
         <div id="crosshair"><span></span><span></span><span></span><span></span></div>
+        <div id="chat"><div id="chat_log"></div></div>
         <div id="health_container">
             <span class="kanji">霊圧</span>
             <div class="bar"><div id="health_fill"></div></div>
@@ -41,8 +50,8 @@
         </div>
 
         <script>
-            // Simulation : la vie baisse, les munitions diminuent, la boussole tourne, des événements arrivent
-            let hp = 100, clip = 30, heading = 0, tick = 0;
+            // Simulation : vie, munitions, boussole, événements, chat, invite et mission
+            let hp = 100, clip = 30, heading = 0, tick = 0, mission = 0;
             const h = window.__handlers;
             setInterval(function () {
                 tick++;
@@ -54,6 +63,12 @@
                 if (h.UpdateCompass) h.UpdateCompass(heading);
                 if (tick % 8 === 0 && h.AddFeed) h.AddFeed("Hollow vaincu au Rukongai", "kill");
                 if (tick % 12 === 0 && h.AddFeed) h.AddFeed("Raid de Hollows dans 5 min", "alert");
+                if (tick % 6 === 0 && h.AddChat) h.AddChat("Ichigo_RP", "On part en patrouille ?");
+                if (tick % 10 === 0 && h.AddChat) h.AddChat("Unohana", "Je suis là pour les blessés.");
+                if (tick % 5 === 0 && h.ShowPrompt) h.ShowPrompt("E", "Ramasser");
+                if (tick % 5 === 2 && h.HidePrompt) h.HidePrompt();
+                mission = (mission + 5) % 105;
+                if (h.UpdateMission) h.UpdateMission("Patrouille : 3 Hollows à purifier", mission);
             }, 400);
             if (h.UpdatePlayer) h.UpdatePlayer("Shinigami", 4);
         </script>

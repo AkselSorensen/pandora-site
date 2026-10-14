@@ -6,6 +6,12 @@
         <script src="index.js"></script>
     </head>
     <body>
+        <!-- Bandeau de mission : haut centre, sous la boussole -->
+        <div id="mission">
+            <div class="mission_title" id="mission_title">Aucune mission</div>
+            <div class="mission_bar"><div id="mission_fill"></div></div>
+        </div>
+
         <!-- Carte du joueur : haut gauche -->
         <div id="player_card">
             <div class="division" id="player_division">DIVISION —</div>
@@ -21,8 +27,19 @@
         <!-- Fil d'événements : haut droite -->
         <div id="feed"></div>
 
+        <!-- Invite d'action : sous le réticule -->
+        <div id="prompt" class="hidden">
+            <span class="key" id="prompt_key">E</span>
+            <span id="prompt_text">Ramasser</span>
+        </div>
+
         <!-- Réticule : centre -->
         <div id="crosshair"><span></span><span></span><span></span><span></span></div>
+
+        <!-- Chat : bas gauche, au-dessus de la vie -->
+        <div id="chat">
+            <div id="chat_log"></div>
+        </div>
 
         <!-- Reiatsu (vie) : bas gauche -->
         <div id="health_container">

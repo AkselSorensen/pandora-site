@@ -45,3 +45,37 @@ Events.Subscribe("AddFeed", function(text, kind) {
     // Limite à 5 lignes visibles
     while (feed.children.length > 5) feed.lastChild.remove();
 });
+
+// Invite d'action (ex. « Ramasser »), envoyée par Lua via ShowPrompt
+Events.Subscribe("ShowPrompt", function(key, text) {
+    document.getElementById("prompt_key").textContent = key;
+    document.getElementById("prompt_text").textContent = text;
+    document.getElementById("prompt").classList.remove("hidden");
+});
+
+// Cache l'invite d'action, envoyée par Lua via HidePrompt
+Events.Subscribe("HidePrompt", function() {
+    document.getElementById("prompt").classList.add("hidden");
+});
+
+// Chat : ajoute un message, envoyé par Lua via AddChat
+Events.Subscribe("AddChat", function(author, text) {
+    const log = document.getElementById("chat_log");
+    const line = document.createElement("div");
+    line.className = "chat_line";
+    const who = document.createElement("span");
+    who.className = "chat_author";
+    who.textContent = author + " : ";
+    line.appendChild(who);
+    line.appendChild(document.createTextNode(text));
+    log.appendChild(line);
+    // Garde les 8 derniers messages, et les fait disparaître après 12 secondes
+    while (log.children.length > 8) log.firstChild.remove();
+    setTimeout(() => line.classList.add("fade"), 12000);
+});
+
+// Bandeau de mission : titre et progression (0 à 100), envoyé par Lua via UpdateMission
+Events.Subscribe("UpdateMission", function(title, progress) {
+    document.getElementById("mission_title").textContent = title;
+    document.getElementById("mission_fill").style.width = Math.max(0, Math.min(100, progress)) + "%";
+});
