@@ -108,3 +108,51 @@ end
 function UpdateMission(title, progress)
     main_hud:CallEvent("UpdateMission", title, progress)
 end
+
+-- Barre d'XP et rang
+function UpdateXP(rank, progress)
+    main_hud:CallEvent("UpdateXP", rank, progress)
+end
+
+-- Capacité : emplacement (0 à 3), libellé et cooldown restant (0 à 1)
+function SetAbility(slot, label, cooldown)
+    main_hud:CallEvent("SetAbility", slot, label, cooldown)
+end
+
+-- Hotbar : emplacement (0 à 4), libellé et état actif
+function SetHotbar(slot, label, active)
+    main_hud:CallEvent("SetHotbar", slot, label, active)
+end
+
+-- Indicateur de dégâts sous le réticule (à appeler quand le joueur touche)
+function HitMarker()
+    main_hud:CallEvent("HitMarker")
+end
+
+-- Écran de mort avec compte à rebours (en secondes)
+function ShowDeath(seconds)
+    main_hud:CallEvent("ShowDeath", seconds)
+end
+
+-- Fin de l'écran de mort
+function HideDeath()
+    main_hud:CallEvent("HideDeath")
+end
+
+-- Tableau des scores : vider, ajouter une ligne, puis afficher ou cacher
+function ClearScore()
+    main_hud:CallEvent("ClearScore")
+end
+
+function AddScoreRow(name, division, kills)
+    main_hud:CallEvent("AddScoreRow", name, division, kills)
+end
+
+function ShowScoreboard(show)
+    main_hud:CallEvent("ShowScoreboard", show)
+end
+
+-- Notification temporaire (haut centre)
+function Toast(text)
+    main_hud:CallEvent("Toast", text)
+end

@@ -12,11 +12,14 @@ Events.Subscribe("UpdateHealth", function(health) {
     document.getElementById("health_current").textContent = value;
     document.getElementById("health_fill").style.width = Math.min(100, value) + "%";
 
-    // Sous 25 : le HUD passe au rouge Hollow
+    // Sous 25 : la barre passe au rouge Hollow
     const low = value <= 25;
     document.getElementById("health_fill").style.background = low
         ? "linear-gradient(90deg, #d24a3a, #f08a7a)"
         : "linear-gradient(90deg, #9fb7d1, #efeae0)";
+
+    // Halo de reiatsu : bords rouges sous 25
+    document.getElementById("vignette").classList.toggle("on", low);
 });
 
 // Carte du joueur (nom et division), envoyée par Lua via UpdatePlayer
@@ -27,7 +30,6 @@ Events.Subscribe("UpdatePlayer", function(name, division) {
 
 // Boussole : cap en degrés (0 = Nord), envoyé par Lua via UpdateCompass
 Events.Subscribe("UpdateCompass", function(heading) {
-    // Déplace la bande de points cardinaux selon le cap
     const strip = document.getElementById("compass_strip");
     const offset = -((heading % 360) / 360) * 400;
     strip.style.transform = "translateX(" + offset + "px)";
@@ -78,4 +80,82 @@ Events.Subscribe("AddChat", function(author, text) {
 Events.Subscribe("UpdateMission", function(title, progress) {
     document.getElementById("mission_title").textContent = title;
     document.getElementById("mission_fill").style.width = Math.max(0, Math.min(100, progress)) + "%";
+});
+
+// Barre d'XP et rang, envoyée par Lua via UpdateXP
+Events.Subscribe("UpdateXP", function(rank, progress) {
+    document.getElementById("xp_text").textContent = "Rang " + rank;
+    document.getElementById("xp_fill").style.width = Math.max(0, Math.min(100, progress)) + "%";
+});
+
+// Capacité : emplacement (0 à 3), libellé et cooldown restant de 0 à 1, envoyé par Lua via SetAbility
+Events.Subscribe("SetAbility", function(slot, label, cooldown) {
+    const el = document.querySelector('#abilities .slot[data-slot="' + slot + '"]');
+    if (!el) return;
+    el.querySelector(".label").textContent = label;
+    el.querySelector(".cd").style.height = Math.max(0, Math.min(1, cooldown)) * 100 + "%";
+});
+
+// Hotbar : emplacement (0 à 4), libellé et état actif, envoyé par Lua via SetHotbar
+Events.Subscribe("SetHotbar", function(slot, label, active) {
+    const el = document.querySelector('#hotbar .hot[data-hot="' + slot + '"]');
+    if (!el) return;
+    el.querySelector(".label").textContent = label;
+    el.classList.toggle("active", !!active);
+});
+
+// Indicateur de dégâts : flash sous le réticule, envoyé par Lua via HitMarker
+Events.Subscribe("HitMarker", function() {
+    const hit = document.getElementById("hit");
+    hit.classList.remove("flash");
+    void hit.offsetWidth; // relance l'animation
+    hit.classList.add("flash");
+});
+
+// Écran de mort avec compte à rebours, envoyé par Lua via ShowDeath (secondes restantes)
+let deathTimer = null;
+Events.Subscribe("ShowDeath", function(seconds) {
+    document.getElementById("death").classList.remove("hidden");
+    let left = seconds;
+    document.getElementById("death_seconds").textContent = left;
+    clearInterval(deathTimer);
+    deathTimer = setInterval(function () {
+        left--;
+        document.getElementById("death_seconds").textContent = Math.max(0, left);
+        if (left <= 0) clearInterval(deathTimer);
+    }, 1000);
+});
+
+// Fin de l'écran de mort, envoyée par Lua via HideDeath
+Events.Subscribe("HideDeath", function() {
+    clearInterval(deathTimer);
+    document.getElementById("death").classList.add("hidden");
+});
+
+// Tableau des scores : on vide, on ajoute des lignes, puis on affiche ou cache
+Events.Subscribe("ClearScore", function() {
+    document.getElementById("score_rows").innerHTML = "";
+});
+Events.Subscribe("AddScoreRow", function(name, division, kills) {
+    const tr = document.createElement("tr");
+    [name, "Division " + division, kills].forEach(function (value) {
+        const td = document.createElement("td");
+        td.textContent = value;
+        tr.appendChild(td);
+    });
+    document.getElementById("score_rows").appendChild(tr);
+});
+Events.Subscribe("ShowScoreboard", function(show) {
+    document.getElementById("scoreboard").classList.toggle("hidden", !show);
+});
+
+// Notification : texte qui apparaît puis disparaît, envoyé par Lua via Toast
+Events.Subscribe("Toast", function(text) {
+    const box = document.getElementById("toasts");
+    const item = document.createElement("div");
+    item.className = "toast";
+    item.textContent = text;
+    box.appendChild(item);
+    setTimeout(() => item.classList.add("out"), 3500);
+    setTimeout(() => item.remove(), 4200);
 });

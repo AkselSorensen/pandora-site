@@ -24,6 +24,7 @@ html, body {
     letter-spacing: 0.1em;
 }
 
+/* Vie (reiatsu) : bas gauche */
 #health_container {
     position: absolute;
     left: 32px;
@@ -36,20 +37,17 @@ html, body {
     align-items: center;
     gap: 14px;
 }
-
 #health_container .bar {
     flex: 1;
     height: 8px;
     background: rgba(239, 234, 224, 0.12);
 }
-
 #health_fill {
     width: 100%;
     height: 100%;
     background: linear-gradient(90deg, var(--spirit), var(--ivory));
     transition: width 0.3s ease, background 0.3s ease;
 }
-
 #health_current {
     font-size: 28px;
     font-weight: 800;
@@ -57,6 +55,7 @@ html, body {
     text-align: right;
 }
 
+/* Munitions : bas droite */
 #weapon_ammo_container {
     display: none;
     position: absolute;
@@ -68,12 +67,10 @@ html, body {
     align-items: baseline;
     gap: 12px;
 }
-
 #weapon_ammo_clip {
     font-size: 40px;
     font-weight: 800;
 }
-
 #weapon_ammo_bag {
     font-size: 16px;
     color: var(--spirit);
@@ -88,17 +85,33 @@ html, body {
     background: var(--panel);
     border-left: 3px solid var(--hollow);
 }
-
 #player_card .division {
     font-size: 12px;
     letter-spacing: 0.12em;
     color: var(--spirit);
 }
-
 #player_card .name {
     font-size: 20px;
     font-weight: 800;
     margin-top: 4px;
+}
+#player_card .xp_bar {
+    margin-top: 10px;
+    height: 4px;
+    width: 220px;
+    background: rgba(239, 234, 224, 0.12);
+}
+#xp_fill {
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(90deg, var(--spirit), var(--ivory));
+    transition: width 0.5s ease;
+}
+#player_card .xp_text {
+    margin-top: 4px;
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    color: var(--spirit);
 }
 
 /* Boussole : haut centre */
@@ -113,7 +126,6 @@ html, body {
     background: var(--panel);
     border-top: 2px solid var(--spirit);
 }
-
 #compass .strip {
     position: absolute;
     left: 50%;
@@ -126,13 +138,11 @@ html, body {
     line-height: 36px;
     letter-spacing: 0.3em;
 }
-
 #compass_strip {
     display: inline-block;
     white-space: nowrap;
     transition: transform 0.15s linear;
 }
-
 #compass .marker {
     position: absolute;
     left: 50%;
@@ -141,6 +151,60 @@ html, body {
     height: 8px;
     margin-left: -1px;
     background: var(--ivory);
+}
+
+/* Bandeau de mission : sous la boussole */
+#mission {
+    position: absolute;
+    left: 50%;
+    top: 84px;
+    transform: translateX(-50%);
+    width: 360px;
+    padding: 10px 14px;
+    background: var(--panel);
+    border-left: 3px solid var(--spirit);
+}
+.mission_title {
+    font-size: 14px;
+    font-weight: 800;
+    letter-spacing: 0.04em;
+}
+.mission_bar {
+    margin-top: 8px;
+    height: 4px;
+    background: rgba(239, 234, 224, 0.12);
+}
+#mission_fill {
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(90deg, var(--spirit), var(--ivory));
+    transition: width 0.4s ease;
+}
+
+/* Notifications : haut centre, sous le bandeau de mission */
+#toasts {
+    position: absolute;
+    left: 50%;
+    top: 150px;
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    align-items: center;
+    pointer-events: none;
+}
+.toast {
+    padding: 10px 18px;
+    background: var(--panel);
+    border-top: 2px solid var(--spirit);
+    font-size: 15px;
+    transition: opacity 0.6s ease, transform 0.6s ease;
+    animation: toastIn 0.4s ease;
+}
+.toast.out { opacity: 0; transform: translateY(-8px); }
+@keyframes toastIn {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
 }
 
 /* Fil d'événements : haut droite */
@@ -154,7 +218,6 @@ html, body {
     gap: 6px;
     align-items: flex-end;
 }
-
 .feed_line {
     padding: 6px 12px;
     background: var(--panel);
@@ -162,13 +225,11 @@ html, body {
     border-right: 3px solid var(--spirit);
     animation: feedIn 0.3s ease;
 }
-
 .feed_line.kill { border-right-color: var(--hollow); }
 .feed_line.alert { border-right-color: var(--hollow); color: #f08a7a; }
-
 @keyframes feedIn {
     from { opacity: 0; transform: translateX(20px); }
-    to   { opacity: 1; transform: translateX(0); }
+    to { opacity: 1; transform: translateX(0); }
 }
 
 /* Réticule : centre */
@@ -180,17 +241,43 @@ html, body {
     height: 24px;
     margin: -12px 0 0 -12px;
 }
-
 #crosshair span {
     position: absolute;
     background: var(--ivory);
     opacity: 0.85;
 }
-
 #crosshair span:nth-child(1) { left: 11px; top: 0; width: 2px; height: 7px; }
 #crosshair span:nth-child(2) { left: 11px; bottom: 0; width: 2px; height: 7px; }
 #crosshair span:nth-child(3) { top: 11px; left: 0; width: 7px; height: 2px; }
 #crosshair span:nth-child(4) { top: 11px; right: 0; width: 7px; height: 2px; }
+
+/* Indicateur de dégâts : sous le réticule */
+#hit {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 36px;
+    height: 36px;
+    margin: -18px;
+    opacity: 0;
+    pointer-events: none;
+}
+#hit::before, #hit::after {
+    content: "";
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 22px;
+    height: 2px;
+    background: var(--hollow);
+}
+#hit::before { transform: translate(-50%, -50%) rotate(45deg); }
+#hit::after { transform: translate(-50%, -50%) rotate(-45deg); }
+#hit.flash { animation: hitFlash 0.35s ease-out; }
+@keyframes hitFlash {
+    from { opacity: 1; }
+    to { opacity: 0; }
+}
 
 /* Invite d'action : sous le réticule */
 #prompt {
@@ -207,9 +294,7 @@ html, body {
     font-weight: 800;
     transition: opacity 0.2s ease;
 }
-
 #prompt.hidden { opacity: 0; pointer-events: none; }
-
 #prompt .key {
     display: inline-block;
     min-width: 28px;
@@ -220,37 +305,6 @@ html, body {
     font-size: 14px;
 }
 
-/* Bandeau de mission : sous la boussole */
-#mission {
-    position: absolute;
-    left: 50%;
-    top: 84px;
-    transform: translateX(-50%);
-    width: 360px;
-    padding: 10px 14px;
-    background: var(--panel);
-    border-left: 3px solid var(--spirit);
-}
-
-.mission_title {
-    font-size: 14px;
-    font-weight: 800;
-    letter-spacing: 0.04em;
-}
-
-.mission_bar {
-    margin-top: 8px;
-    height: 4px;
-    background: rgba(239, 234, 224, 0.12);
-}
-
-#mission_fill {
-    height: 100%;
-    width: 0%;
-    background: linear-gradient(90deg, var(--spirit), var(--ivory));
-    transition: width 0.4s ease;
-}
-
 /* Chat : bas gauche, au-dessus de la vie */
 #chat {
     position: absolute;
@@ -259,13 +313,11 @@ html, body {
     width: 380px;
     pointer-events: none;
 }
-
 #chat_log {
     display: flex;
     flex-direction: column;
     gap: 4px;
 }
-
 .chat_line {
     padding: 4px 10px;
     background: rgba(11, 15, 26, 0.55);
@@ -273,10 +325,146 @@ html, body {
     line-height: 1.4;
     transition: opacity 1.5s ease;
 }
-
 .chat_line.fade { opacity: 0; }
-
 .chat_author {
     color: var(--spirit);
     font-weight: 800;
 }
+
+/* Capacités : au-dessus de la hotbar */
+#abilities {
+    position: absolute;
+    left: 50%;
+    bottom: 110px;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 10px;
+}
+#abilities .slot {
+    position: relative;
+    width: 56px;
+    height: 56px;
+    background: var(--panel);
+    border: 1px solid rgba(159, 183, 209, 0.3);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+#abilities .key {
+    position: absolute;
+    top: 3px;
+    left: 5px;
+    font-size: 11px;
+    color: var(--spirit);
+}
+#abilities .label {
+    font-size: 12px;
+    text-align: center;
+    padding: 0 4px;
+}
+#abilities .cd {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    height: 0%;
+    background: rgba(11, 15, 26, 0.7);
+    transition: height 0.2s linear;
+}
+
+/* Hotbar : bas centre */
+#hotbar {
+    position: absolute;
+    left: 50%;
+    bottom: 36px;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 6px;
+}
+#hotbar .hot {
+    position: relative;
+    width: 72px;
+    height: 48px;
+    background: var(--panel);
+    border: 1px solid rgba(159, 183, 209, 0.25);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+}
+#hotbar .num {
+    position: absolute;
+    top: 2px;
+    left: 5px;
+    font-size: 10px;
+    color: var(--spirit);
+}
+#hotbar .hot.active {
+    border-color: var(--ivory);
+    box-shadow: 0 0 12px rgba(239, 234, 224, 0.35);
+}
+
+/* Tableau des scores : au centre */
+#scoreboard {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    min-width: 520px;
+    padding: 24px 28px;
+    background: rgba(11, 15, 26, 0.9);
+    border-top: 2px solid var(--spirit);
+}
+#scoreboard.hidden { display: none; }
+.sb_title {
+    font-size: 16px;
+    font-weight: 800;
+    letter-spacing: 0.2em;
+    margin-bottom: 14px;
+    color: var(--spirit);
+}
+#scoreboard table { width: 100%; border-collapse: collapse; font-size: 14px; }
+#scoreboard th {
+    text-align: left;
+    font-size: 12px;
+    color: var(--spirit);
+    font-weight: 600;
+    padding-bottom: 8px;
+}
+#scoreboard td { padding: 6px 0; border-top: 1px solid rgba(239, 234, 224, 0.1); }
+
+/* Écran de mort : plein écran, voile sombre */
+#death {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: rgba(11, 15, 26, 0.75);
+}
+#death.hidden { display: none; }
+.death_title {
+    font-size: 56px;
+    font-weight: 800;
+    color: var(--ivory);
+}
+.death_timer {
+    margin-top: 16px;
+    font-size: 18px;
+    color: var(--spirit);
+}
+
+/* Halo de reiatsu : bords rouges quand la vie est basse */
+#vignette {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.5s ease;
+    background: radial-gradient(ellipse at center, transparent 55%, rgba(210, 74, 58, 0.45) 100%);
+}
+#vignette.on { opacity: 1; }

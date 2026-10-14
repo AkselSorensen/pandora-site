@@ -6,7 +6,16 @@
         <script src="index.js"></script>
     </head>
     <body>
-        <!-- Bandeau de mission : haut centre, sous la boussole -->
+        <!-- Halo de reiatsu : quand la vie est basse -->
+        <div id="vignette"></div>
+
+        <!-- Indicateur de dégâts : sous le réticule -->
+        <div id="hit"></div>
+
+        <!-- Notifications : haut centre, sous le bandeau de mission -->
+        <div id="toasts"></div>
+
+        <!-- Bandeau de mission -->
         <div id="mission">
             <div class="mission_title" id="mission_title">Aucune mission</div>
             <div class="mission_bar"><div id="mission_fill"></div></div>
@@ -16,6 +25,8 @@
         <div id="player_card">
             <div class="division" id="player_division">DIVISION —</div>
             <div class="name" id="player_name">Shinigami</div>
+            <div class="xp_bar"><div id="xp_fill"></div></div>
+            <div class="xp_text" id="xp_text">Rang 1</div>
         </div>
 
         <!-- Boussole : haut centre -->
@@ -35,6 +46,38 @@
 
         <!-- Réticule : centre -->
         <div id="crosshair"><span></span><span></span><span></span><span></span></div>
+
+        <!-- Tableau des scores (Tab) -->
+        <div id="scoreboard" class="hidden">
+            <div class="sb_title">SCORES</div>
+            <table>
+                <thead><tr><th>Joueur</th><th>Division</th><th>Éliminations</th></tr></thead>
+                <tbody id="score_rows"></tbody>
+            </table>
+        </div>
+
+        <!-- Écran de mort -->
+        <div id="death" class="hidden">
+            <div class="death_title">Tu es tombé</div>
+            <div class="death_timer">Réapparition dans <span id="death_seconds">5</span> s</div>
+        </div>
+
+        <!-- Capacités : bas centre, au-dessus de la hotbar -->
+        <div id="abilities">
+            <div class="slot" data-slot="0"><span class="key">Q</span><span class="label">—</span><div class="cd"></div></div>
+            <div class="slot" data-slot="1"><span class="key">E</span><span class="label">—</span><div class="cd"></div></div>
+            <div class="slot" data-slot="2"><span class="key">R</span><span class="label">—</span><div class="cd"></div></div>
+            <div class="slot" data-slot="3"><span class="key">F</span><span class="label">—</span><div class="cd"></div></div>
+        </div>
+
+        <!-- Hotbar : bas centre -->
+        <div id="hotbar">
+            <div class="hot" data-hot="0"><span class="num">1</span><span class="label">—</span></div>
+            <div class="hot" data-hot="1"><span class="num">2</span><span class="label">—</span></div>
+            <div class="hot" data-hot="2"><span class="num">3</span><span class="label">—</span></div>
+            <div class="hot" data-hot="3"><span class="num">4</span><span class="label">—</span></div>
+            <div class="hot" data-hot="4"><span class="num">5</span><span class="label">—</span></div>
+        </div>
 
         <!-- Chat : bas gauche, au-dessus de la vie -->
         <div id="chat">

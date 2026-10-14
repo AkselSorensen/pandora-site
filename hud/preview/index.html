@@ -19,6 +19,9 @@
         <script src="../Client/UI/index.js"></script>
     </head>
     <body>
+        <div id="vignette"></div>
+        <div id="hit"></div>
+        <div id="toasts"></div>
         <div id="mission">
             <div class="mission_title" id="mission_title">Aucune mission</div>
             <div class="mission_bar"><div id="mission_fill"></div></div>
@@ -26,6 +29,8 @@
         <div id="player_card">
             <div class="division" id="player_division">DIVISION —</div>
             <div class="name" id="player_name">Shinigami</div>
+            <div class="xp_bar"><div id="xp_fill"></div></div>
+            <div class="xp_text" id="xp_text">Rang 1</div>
         </div>
         <div id="compass">
             <div class="strip"><span id="compass_strip">N · · E · · S · · O · · N</span></div>
@@ -37,6 +42,30 @@
             <span id="prompt_text">Ramasser</span>
         </div>
         <div id="crosshair"><span></span><span></span><span></span><span></span></div>
+        <div id="scoreboard" class="hidden">
+            <div class="sb_title">SCORES</div>
+            <table>
+                <thead><tr><th>Joueur</th><th>Division</th><th>Éliminations</th></tr></thead>
+                <tbody id="score_rows"></tbody>
+            </table>
+        </div>
+        <div id="death" class="hidden">
+            <div class="death_title">Tu es tombé</div>
+            <div class="death_timer">Réapparition dans <span id="death_seconds">5</span> s</div>
+        </div>
+        <div id="abilities">
+            <div class="slot" data-slot="0"><span class="key">Q</span><span class="label">Bankai</span><div class="cd"></div></div>
+            <div class="slot" data-slot="1"><span class="key">E</span><span class="label">Sonido</span><div class="cd"></div></div>
+            <div class="slot" data-slot="2"><span class="key">R</span><span class="label">Getsuga</span><div class="cd"></div></div>
+            <div class="slot" data-slot="3"><span class="key">F</span><span class="label">Kido</span><div class="cd"></div></div>
+        </div>
+        <div id="hotbar">
+            <div class="hot" data-hot="0"><span class="num">1</span><span class="label">Zanpakuto</span></div>
+            <div class="hot active" data-hot="1"><span class="num">2</span><span class="label">Arme</span></div>
+            <div class="hot" data-hot="2"><span class="num">3</span><span class="label">Soin</span></div>
+            <div class="hot" data-hot="3"><span class="num">4</span><span class="label">—</span></div>
+            <div class="hot" data-hot="4"><span class="num">5</span><span class="label">—</span></div>
+        </div>
         <div id="chat"><div id="chat_log"></div></div>
         <div id="health_container">
             <span class="kanji">霊圧</span>
@@ -50,27 +79,38 @@
         </div>
 
         <script>
-            // Simulation : vie, munitions, boussole, événements, chat, invite et mission
-            let hp = 100, clip = 30, heading = 0, tick = 0, mission = 0;
+            // Simulation de tout le HUD : vie, munitions, boussole, événements, chat, mission, capacités, dégâts, scores et mort
+            let hp = 100, clip = 30, heading = 0, tick = 0, mission = 0, cd = 0;
             const h = window.__handlers;
+            if (h.UpdatePlayer) h.UpdatePlayer("Shinigami", 4);
+            if (h.UpdateXP) h.UpdateXP(2, 40);
+            if (h.SetHotbar) h.SetHotbar(1, "Arme", true);
+            if (h.ClearScore) h.ClearScore();
+            if (h.AddScoreRow) { h.AddScoreRow("Ichigo_RP", 1, 12); h.AddScoreRow("Unohana", 4, 3); }
+            if (h.ShowScoreboard) h.ShowScoreboard(false);
             setInterval(function () {
                 tick++;
                 hp = hp > 0 ? hp - 2 : 100;
                 clip = clip > 0 ? clip - 1 : 30;
                 heading = (heading + 3) % 360;
+                cd = (cd + 0.05) % 1.05;
                 if (h.UpdateHealth) h.UpdateHealth(hp);
                 if (h.UpdateWeaponAmmo) h.UpdateWeaponAmmo(true, clip, 1000);
                 if (h.UpdateCompass) h.UpdateCompass(heading);
+                if (h.SetAbility) h.SetAbility(0, "Bankai", cd);
                 if (tick % 8 === 0 && h.AddFeed) h.AddFeed("Hollow vaincu au Rukongai", "kill");
                 if (tick % 12 === 0 && h.AddFeed) h.AddFeed("Raid de Hollows dans 5 min", "alert");
                 if (tick % 6 === 0 && h.AddChat) h.AddChat("Ichigo_RP", "On part en patrouille ?");
                 if (tick % 10 === 0 && h.AddChat) h.AddChat("Unohana", "Je suis là pour les blessés.");
                 if (tick % 5 === 0 && h.ShowPrompt) h.ShowPrompt("E", "Ramasser");
                 if (tick % 5 === 2 && h.HidePrompt) h.HidePrompt();
+                if (tick % 4 === 0 && h.HitMarker) h.HitMarker();
+                if (tick % 15 === 0 && h.Toast) h.Toast("Promotion : tu es maintenant lieutenant");
                 mission = (mission + 5) % 105;
                 if (h.UpdateMission) h.UpdateMission("Patrouille : 3 Hollows à purifier", mission);
+                // Scores (Tab) affichés une fois sur deux cycles pour la démo
+                if (h.ShowScoreboard) h.ShowScoreboard(tick % 30 < 6);
             }, 400);
-            if (h.UpdatePlayer) h.UpdatePlayer("Shinigami", 4);
         </script>
     </body>
 </html>
