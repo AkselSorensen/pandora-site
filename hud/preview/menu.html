@@ -13,7 +13,6 @@
                 color: #efeae0;
             }
 
-            /* Fumée discrète en bas à gauche */
             .smoke {
                 position: absolute;
                 left: 0;
@@ -23,7 +22,6 @@
                 pointer-events: none;
             }
 
-            /* Bouton d'ouverture */
             #open_menu {
                 position: absolute;
                 right: 32px;
@@ -43,7 +41,6 @@
             }
             #open_menu:hover { filter: brightness(1.2); }
 
-            /* Panneau : cadre large, coins conservés */
             #menu {
                 position: absolute;
                 left: 50%;
@@ -79,7 +76,6 @@
             }
             #menu.rolling .buttons { display: none; }
 
-            /* Boutons : cadre petit, coins conservés */
             #menu button.option {
                 width: 280px;
                 height: 44px;
@@ -94,7 +90,6 @@
             }
             #menu button.option:hover { filter: brightness(1.25); }
 
-            /* Fermeture : zone posée sur la croix du cadre */
             #close_menu {
                 position: absolute;
                 right: -44px;
@@ -107,59 +102,62 @@
                 cursor: pointer;
             }
 
-            /* ===== Reroll : prisme 3D ===== */
+            /* ===== Reroll : roue de zanpakuto en 3D ===== */
             #roll {
                 display: none;
                 flex-direction: column;
                 align-items: center;
-                margin-top: 18px;
+                margin-top: 6px;
             }
             #menu.rolling #roll { display: flex; }
 
             .stage {
                 position: relative;
-                width: 320px;
-                height: 230px;
-                perspective: 900px;
+                width: 420px;
+                height: 300px;
+                perspective: 1000px;
             }
-            .prism {
+            /* La roue est inclinée vers le haut pour donner de la profondeur */
+            .wheel {
                 position: absolute;
                 left: 50%;
                 top: 50%;
-                width: 140px;
-                height: 150px;
-                margin: -75px 0 0 -70px;
+                width: 0;
+                height: 0;
                 transform-style: preserve-3d;
-                transform: rotateY(0deg);
-                transition: transform 2.6s cubic-bezier(0.12, 0.8, 0.2, 1);
+                transform: rotateX(-14deg) rotateY(0deg);
+                transition: transform 6.5s cubic-bezier(0.05, 0.75, 0.15, 1);
             }
-            .face {
+            .card {
                 position: absolute;
-                inset: 0;
+                width: 96px;
+                height: 120px;
+                left: -48px;
+                top: -60px;
                 display: flex;
                 flex-direction: column;
                 align-items: center;
                 justify-content: center;
-                gap: 6px;
-                background: rgba(11, 15, 26, 0.8);
+                gap: 4px;
+                background: rgba(11, 15, 26, 0.85);
                 border: 1px solid rgba(159, 183, 209, 0.55);
-                box-shadow: inset 0 0 22px rgba(159, 183, 209, 0.25);
+                box-shadow: inset 0 0 20px rgba(159, 183, 209, 0.25);
                 backface-visibility: hidden;
             }
-            .face .kanji {
-                font-size: 60px;
+            .card .kanji {
+                font-size: 48px;
                 font-weight: 800;
                 color: #efeae0;
                 line-height: 1;
             }
-            .face .label {
-                font-size: 12px;
-                letter-spacing: 0.12em;
+            .card .label {
+                font-size: 10px;
+                letter-spacing: 0.1em;
                 color: #9fb7d1;
             }
-            .face.win {
+            .card.win {
                 border-color: #efeae0;
-                box-shadow: 0 0 30px rgba(239, 234, 224, 0.8), inset 0 0 26px rgba(159, 183, 209, 0.5);
+                box-shadow: 0 0 34px rgba(239, 234, 224, 0.9), inset 0 0 26px rgba(159, 183, 209, 0.5);
             }
 
             /* Anneau de choc à l'arrêt */
@@ -167,23 +165,23 @@
                 position: absolute;
                 left: 50%;
                 top: 50%;
-                width: 260px;
-                height: 260px;
-                margin: -130px 0 0 -130px;
+                width: 300px;
+                height: 300px;
+                margin: -150px 0 0 -150px;
                 border-radius: 50%;
                 border: 2px solid #efeae0;
                 transform: scale(0.2);
                 opacity: 0;
                 pointer-events: none;
             }
-            .ring.go { animation: shock 0.9s ease-out forwards; }
+            .ring.go { animation: shock 1s ease-out forwards; }
             @keyframes shock {
                 0% { transform: scale(0.2); opacity: 0.9; }
                 100% { transform: scale(1.4); opacity: 0; }
             }
 
             #roll_result {
-                margin-top: 6px;
+                margin-top: 4px;
                 min-height: 48px;
                 font-size: 18px;
                 text-align: center;
@@ -220,14 +218,7 @@
 
             <div id="roll">
                 <div class="stage">
-                    <div class="prism" id="prism">
-                        <div class="face" style="transform: rotateY(0deg) translateZ(121px)"><span class="kanji">霊</span><span class="label">REIATSU +10</span></div>
-                        <div class="face" style="transform: rotateY(60deg) translateZ(121px)"><span class="kanji">斬</span><span class="label">BANKAI</span></div>
-                        <div class="face" style="transform: rotateY(120deg) translateZ(121px)"><span class="kanji">炎</span><span class="label">GETSUGA</span></div>
-                        <div class="face" style="transform: rotateY(180deg) translateZ(121px)"><span class="kanji">氷</span><span class="label">HYORIN</span></div>
-                        <div class="face" style="transform: rotateY(240deg) translateZ(121px)"><span class="kanji">闇</span><span class="label">HUECO</span></div>
-                        <div class="face" style="transform: rotateY(300deg) translateZ(121px)"><span class="kanji">月</span><span class="label">TSUKUYOMI</span></div>
-                    </div>
+                    <div class="wheel" id="wheel"></div>
                     <div class="ring" id="ring"></div>
                 </div>
                 <div id="roll_result">
@@ -239,12 +230,29 @@
 
         <script>
             const menu = document.getElementById("menu");
-            const prism = document.getElementById("prism");
+            const wheel = document.getElementById("wheel");
             const ring = document.getElementById("ring");
             const result = document.getElementById("roll_result");
             const rollText = document.getElementById("roll_text");
-            const faces = prism.querySelectorAll(".face");
-            const outcomes = ["Reiatsu +10 pendant 5 min", "Bankai débloqué", "Getsuga Tenshō", "Hyōrinmaru", "Hueco Mundo : vision", "Tsukuyomi : illusion"];
+
+            // Douze cartes disposées en cercle autour de l'axe vertical
+            const cards = [
+                ["霊", "REIATSU +10"], ["斬", "BANKAI"], ["炎", "GETSUGA"], ["氷", "HYORIN"],
+                ["闇", "HUECO"], ["月", "TSUKUYOMI"], ["虚", "HOLLOW"], ["風", "SONIDO"],
+                ["雷", "RAIKO"], ["血", "SANGRE"], ["刃", "ZANPAKUTO"], ["死", "SHINIGAMI"]
+            ];
+            const RADIUS = 210;
+            const outcomes = cards.map(c => c[1] + " : nouvelle capacité débloquée");
+            const elements = cards.map(function (c, i) {
+                const card = document.createElement("div");
+                card.className = "card";
+                const step = 360 / cards.length;
+                card.style.transform = "rotateY(" + (i * step) + "deg) translateZ(" + RADIUS + "px)";
+                card.innerHTML = '<span class="kanji">' + c[0] + '</span><span class="label">' + c[1] + '</span>';
+                wheel.appendChild(card);
+                return card;
+            });
+
             let angle = 0;
             let rolling = false;
 
@@ -252,45 +260,44 @@
                 menu.classList.add("open");
             });
 
-            // Fermer : la croix du cadre et la touche Échap
             function closeMenu() {
                 menu.classList.remove("open", "rolling");
                 result.classList.remove("show");
-                faces.forEach(f => f.classList.remove("win"));
+                elements.forEach(e => e.classList.remove("win"));
             }
             document.getElementById("close_menu").addEventListener("click", closeMenu);
             document.addEventListener("keydown", function (e) {
                 if (e.key === "Escape") closeMenu();
             });
 
-            // Reroll : le prisme tourne plusieurs tours puis s'arrête sur une face tirée au hasard
+            // Reroll : la roue tourne longtemps, en ralentissant, puis s'arrête sur une carte tirée au hasard
             document.getElementById("reroll_btn").addEventListener("click", function () {
                 if (rolling) return;
                 rolling = true;
                 menu.classList.add("rolling");
                 result.classList.remove("show");
-                faces.forEach(f => f.classList.remove("win"));
+                elements.forEach(e => e.classList.remove("win"));
                 // Force le recalcul avant de tourner, sinon le navigateur saute la transition
-                void prism.offsetWidth;
+                void wheel.offsetWidth;
 
-                const target = Math.floor(Math.random() * 6);
-                // Angle final qui met la face choisie devant : on ajoute 5 tours complets
-                const mod = ((-target * 60 - angle) % 360 + 360) % 360;
-                angle = angle + 1800 + mod;
-                prism.style.transform = "rotateY(" + angle + "deg)";
+                const target = Math.floor(Math.random() * cards.length);
+                const step = 360 / cards.length;
+                // Angle final qui met la carte choisie devant, précédé de 8 tours complets
+                const mod = ((-target * step - angle) % 360 + 360) % 360;
+                angle = angle + 2880 + mod;
+                wheel.style.transform = "rotateX(-14deg) rotateY(" + angle + "deg)";
 
                 setTimeout(function () {
-                    faces[target].classList.add("win");
+                    elements[target].classList.add("win");
                     ring.classList.remove("go");
-                    void ring.offsetWidth; // relance l'animation
+                    void ring.offsetWidth;
                     ring.classList.add("go");
                     rollText.textContent = outcomes[target];
                     result.classList.add("show");
                     rolling = false;
-                }, 2700);
+                }, 6600);
             });
 
-            // Retour aux boutons après un reroll
             document.getElementById("roll_back").addEventListener("click", function () {
                 if (rolling) return;
                 menu.classList.remove("rolling");
