@@ -306,7 +306,8 @@
 <footer>
   <div class="wrap" style="flex-direction: column; gap: 10px;">
     <span class="mono">© PANDORA BLEACH · FAN-PROJECT NON AFFILIÉ À BLEACH NI À NANOS WORLD</span>
-    <span class="mono">This work is based on "Harribel" (<a class="link" href="https://sketchfab.com/3d-models/harribel-5879ebc7d5004f88b19e78f1d2b023a1">sketchfab.com</a>) by leducgagnetommy (<a class="link" href="https://sketchfab.com/leducgagnetommy">sketchfab.com/leducgagnetommy</a>) licensed under <a class="link" href="http://creativecommons.org/licenses/by/4.0/">CC-BY-4.0</a>.</span>
+    <span class="mono">This work is based on "Beyond Bankai Aizen" (<a class="link" href="https://sketchfab.com/3d-models/beyond-bankai-aizen-bd05638f83474e288c4713a534981773">sketchfab.com</a>) by Witsanu Superball (<a class="link" href="https://sketchfab.com/witsanusuperball">sketchfab.com/witsanusuperball</a>) licensed under <a class="link" href="http://creativecommons.org/licenses/by/4.0/">CC-BY-4.0</a>.</span>
+    <span class="mono">This work is based on "Bleach - Ichigo's Sword" (<a class="link" href="https://sketchfab.com/3d-models/bleach-ichigos-sword-5c7b859d166542c3a342b314b8ad559f">sketchfab.com</a>) by Calfan (<a class="link" href="https://sketchfab.com/Calfan">sketchfab.com/Calfan</a>) licensed under <a class="link" href="http://creativecommons.org/licenses/by-nc/4.0/">CC-BY-NC-4.0</a>.</span>
   </div>
 </footer>
 
@@ -319,6 +320,7 @@ const ACCENT = 0xe0562d;
 const canvas = document.getElementById('scene');
 const intro = document.getElementById('intro');
 let introDone = false;
+let weapon = null;
 
 /* Fin de l'intro : le site apparaît */
 function finishIntro() {
@@ -326,6 +328,7 @@ function finishIntro() {
   introDone = true;
   intro.classList.add('hide');
   document.body.classList.remove('intro');
+  if (weapon) weapon.visible = true;
   setTimeout(() => intro.remove(), 1300);
 }
 document.getElementById('skip').addEventListener('click', finishIntro);
@@ -381,7 +384,7 @@ scene.add(holder);
 
 /* Masque chargé depuis models/scene.gltf, mis à l'échelle et centré automatiquement */
 new GLTFLoader().load(
-  'models/scene.gltf',
+  'models/Aizen/scene.gltf',
   (gltf) => {
     const model = gltf.scene;
     const box = new THREE.Box3().setFromObject(model);
@@ -401,15 +404,28 @@ new GLTFLoader().load(
     holder.add(model);
 
 
-    // Animation « win » jouée une seule fois : sa fin ouvre le site
+    // Intro : stay_show puis skill_3_3 jouées une fois, puis stay_show en boucle
     mixer = new THREE.AnimationMixer(model);
-    const win = gltf.animations.find((a) => a.name === 'win');
-    if (win) {
-      const action = mixer.clipAction(win);
-      action.setLoop(THREE.LoopOnce, 1);
-      action.clampWhenFinished = true;
-      mixer.addEventListener('finished', finishIntro);
-      action.play();
+    const stay = gltf.animations.find((a) => a.name === 'stay_show');
+    const skill = gltf.animations.find((a) => a.name === 'skill_3_3');
+    if (stay && skill) {
+      const stayClip = mixer.clipAction(stay);
+      const skillClip = mixer.clipAction(skill);
+      stayClip.setLoop(THREE.LoopOnce, 1);
+      stayClip.clampWhenFinished = true;
+      skillClip.setLoop(THREE.LoopOnce, 1);
+      skillClip.clampWhenFinished = true;
+      mixer.addEventListener('finished', (e) => {
+        if (e.action === stayClip) {
+          skillClip.reset().play();
+          stayClip.crossFadeTo(skillClip, 0.3, false);
+        } else if (e.action === skillClip) {
+          stayClip.reset().setLoop(THREE.LoopRepeat, Infinity).play();
+          skillClip.crossFadeTo(stayClip, 0.3, false);
+          finishIntro();
+        }
+      });
+      stayClip.play();
       introStartAt = elapsed;
     } else {
       finishIntro();
@@ -439,6 +455,25 @@ const particles = new THREE.Points(particleGeo, new THREE.PointsMaterial({
 }));
 scene.add(particles);
 
+/* Épée d'Ichigo : posée à côté du personnage, visible après l'intro */
+new GLTFLoader().load(
+  'models/weapons/scene.gltf',
+  (gltf) => {
+    const sword = gltf.scene;
+    const box = new THREE.Box3().setFromObject(sword);
+    const size = box.getSize(new THREE.Vector3());
+    const center = box.getCenter(new THREE.Vector3());
+    const s = 3.0 / Math.max(size.x, size.y, size.z);
+    sword.scale.setScalar(s);
+    sword.position.set(-center.x * s + 1.1, -center.y * s, -center.z * s + 0.2);
+    sword.visible = introDone;
+    weapon = sword;
+    holder.add(sword);
+  },
+  undefined,
+  (err) => console.error("Chargement de l'épée impossible :", err)
+);
+
 /* ---------- Animation ---------- */
 let scrollRatio = 0;
 function updateScroll() {
@@ -459,8 +494,6 @@ function frame() {
   elapsed += dt;
   const t = elapsed;
   if (mixer) mixer.update(dt);
-  // Intro limitée à environ 3,4 s après le début de l'animation
-  if (!introDone && introStartAt !== null && elapsed - introStartAt > 3.4) finishIntro();
   const desktop = window.innerWidth > 860;
   // Le masque tourne lentement et tourne plus vite au défilement
   holder.rotation.y = (reduce ? 0 : Math.sin(t * 0.4) * 0.35) + scrollRatio * Math.PI * 0.5;
