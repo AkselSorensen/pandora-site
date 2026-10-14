@@ -307,7 +307,7 @@
   <div class="wrap" style="flex-direction: column; gap: 10px;">
     <span class="mono">© PANDORA BLEACH · FAN-PROJECT NON AFFILIÉ À BLEACH NI À NANOS WORLD</span>
     <span class="mono">This work is based on "Beyond Bankai Aizen" (<a class="link" href="https://sketchfab.com/3d-models/beyond-bankai-aizen-bd05638f83474e288c4713a534981773">sketchfab.com</a>) by Witsanu Superball (<a class="link" href="https://sketchfab.com/witsanusuperball">sketchfab.com/witsanusuperball</a>) licensed under <a class="link" href="http://creativecommons.org/licenses/by/4.0/">CC-BY-4.0</a>.</span>
-    <span class="mono">This work is based on "Bleach - Ichigo's Sword" (<a class="link" href="https://sketchfab.com/3d-models/bleach-ichigos-sword-5c7b859d166542c3a342b314b8ad559f">sketchfab.com</a>) by Calfan (<a class="link" href="https://sketchfab.com/Calfan">sketchfab.com/Calfan</a>) licensed under <a class="link" href="http://creativecommons.org/licenses/by-nc/4.0/">CC-BY-NC-4.0</a>.</span>
+    <span class="mono">This work is based on "Ulquiorra Cifer" (<a class="link" href="https://sketchfab.com/3d-models/ulquiorra-cifer-1fbddc1ae1d54b65bc02d5968dfbf339">sketchfab.com</a>) by Witsanu Superball (<a class="link" href="https://sketchfab.com/witsanusuperball">sketchfab.com/witsanusuperball</a>) licensed under <a class="link" href="http://creativecommons.org/licenses/by/4.0/">CC-BY-4.0</a>.</span>
   </div>
 </footer>
 
@@ -321,6 +321,7 @@ const canvas = document.getElementById('scene');
 const intro = document.getElementById('intro');
 let introDone = false;
 let weapon = null;
+let ulqMixer = null;
 let aizenModel = null;
 
 /* Fin de l'intro : le site apparaît */
@@ -461,16 +462,20 @@ scene.add(particles);
 
 /* Épée d'Ichigo : posée à côté du personnage, visible après l'intro */
 new GLTFLoader().load(
-  'models/weapons/scene.gltf',
+  'models/ulqiora/scene.gltf',
   (gltf) => {
     const sword = gltf.scene;
     const box = new THREE.Box3().setFromObject(sword);
     const size = box.getSize(new THREE.Vector3());
     const center = box.getCenter(new THREE.Vector3());
-    const s = 3.0 / Math.max(size.x, size.y, size.z);
+    const s = 3.4 / Math.max(size.x, size.y, size.z);
     sword.scale.setScalar(s);
-    sword.position.set(-center.x * s + 1.1, -center.y * s, -center.z * s + 0.2);
+    sword.position.set(-center.x * s, -center.y * s, -center.z * s);
     sword.visible = introDone;
+    // Ulquiorra joue son animation idle en boucle
+    ulqMixer = new THREE.AnimationMixer(sword);
+    const idleClip = gltf.animations.find((a) => a.name === 'idle');
+    if (idleClip) ulqMixer.clipAction(idleClip).play();
     weapon = sword;
     holder.add(sword);
   },
@@ -497,9 +502,10 @@ function frame() {
   elapsed += dt;
   const t = elapsed;
   if (mixer) mixer.update(dt);
+  if (ulqMixer) ulqMixer.update(dt);
   const desktop = window.innerWidth > 860;
   // Le masque tourne lentement et tourne plus vite au défilement
-  holder.rotation.y = (reduce ? 0 : Math.sin(t * 0.4) * 0.35) + scrollRatio * Math.PI * 0.5;
+  holder.rotation.y = reduce ? 0 : Math.sin(t * 0.4) * 0.25;
   holder.rotation.x = Math.sin(t * 0.5) * 0.05;
   holder.position.y = (reduce ? 0 : Math.sin(t * 0.8) * 0.1) - scrollRatio * 1.0;
   // Centré pendant l'intro, puis glisse à droite sur ordinateur
