@@ -1,15 +1,20 @@
-# HUD nanos world (WebUI HTML)
+# HUD Bleach nanos world (WebUI HTML)
 
-Package de test, d'après le tutoriel officiel « Basic HUD (HTML) » :
+Package HUD inspiré de l'univers Bleach, basé sur le tutoriel officiel « Basic HUD (HTML) » :
 https://docs.nanos-world.com/fr/docs/getting-started/tutorials-and-examples/basic-hud-html
 
 Ce dossier n'est pas servi par le site : il sert de package à copier dans nanos world.
 
-## Fichiers à ajouter avant de tester
+## Aucun fichier à télécharger
 
-Le tutoriel demande deux fichiers qui ne sont pas inclus ici :
-- `Client/UI/jquery-3.7.1.min.js` : à télécharger sur https://code.jquery.com
-- `Client/UI/health.png` : à télécharger sur https://i.imgur.com/0BmQJVZ.png
+Le HUD n'utilise ni jQuery ni image externe : les kanji remplacent l'icône de vie, et le JavaScript est en pur DOM.
+
+## Contenu
+
+- **Vie** (bas gauche) : barre de reiatsu avec le kanji 霊圧. Elle passe au rouge Hollow sous 25.
+- **Munitions** (bas droite) : chargeur et stock, avec le kanji 残弾. Apparaît quand une arme est tenue.
+
+Le script `Client/Index.lua` n'a pas changé : il envoie toujours `UpdateHealth` et `UpdateWeaponAmmo`.
 
 ## Structure
 
@@ -19,7 +24,5 @@ Client/
 └── UI/
     ├── index.html
     ├── style.css
-    ├── index.js
-    ├── jquery-3.7.1.min.js   (à télécharger)
-    └── health.png            (à télécharger)
+    └── index.js
 ```

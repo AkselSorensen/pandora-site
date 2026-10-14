@@ -1,21 +1,23 @@
-<html>
+<!doctype html>
+<html lang="fr">
     <head>
-        <!-- Includes all files we created (JS, JQuery and CSS) -->
-        <script src="jquery-3.7.1.min.js"></script>
-        <script src="index.js"></script>
+        <meta charset="utf-8">
         <link rel="stylesheet" href="style.css">
+        <script src="index.js"></script>
     </head>
     <body>
-        <!-- Health container (black background) -->
+        <!-- Reiatsu (vie) : bas gauche -->
         <div id="health_container">
-            <img src="health.png">
-            <span id="health_current">100</span> <!-- Health value -->
+            <span class="kanji">霊圧</span>
+            <div class="bar"><div id="health_fill"></div></div>
+            <span id="health_current">100</span>
         </div>
 
-        <!-- Weapon Ammo container (black background) -->
+        <!-- Munitions : bas droite -->
         <div id="weapon_ammo_container">
-            <span id="weapon_ammo_clip">30</span> <!-- Ammo Clip value -->
-            <span id="weapon_ammo_bag">/ 1000</span> <!-- Ammo Bag value -->
+            <span class="kanji">残弾</span>
+            <span id="weapon_ammo_clip">30</span>
+            <span id="weapon_ammo_bag">/ 1000</span>
         </div>
     </body>
 </html>
