@@ -337,6 +337,15 @@ new GLTFLoader().load(
     const s = 3.4 / Math.max(size.x, size.y, size.z);
     model.scale.setScalar(s);
     model.position.set(-center.x * s, -center.y * s, -center.z * s);
+    // Diagnostic et réglage des matériaux : couleurs sRGB, réflexions plus douces
+    model.traverse((o) => {
+      if (!o.isMesh) return;
+      const m = o.material;
+      console.log('masque', m.name, 'map:', !!m.map, 'normalMap:', !!m.normalMap);
+      if (m.map) m.map.colorSpace = THREE.SRGBColorSpace;
+      m.envMapIntensity = 0.35;
+      m.needsUpdate = true;
+    });
     holder.add(model);
   },
   undefined,
