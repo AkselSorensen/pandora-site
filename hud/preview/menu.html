@@ -8,73 +8,67 @@
                 margin: 0;
                 height: 100vh;
                 overflow: hidden;
-                background: linear-gradient(180deg, #1b2440, #0b0f1a);
+                background: radial-gradient(ellipse at 50% 40%, #1b2440, #0b0f1a 75%);
                 font-family: "Shippori Mincho B1", "Yu Mincho", serif;
                 color: #efeae0;
             }
 
-            /* Fumée bleue en décor, en bas à gauche */
+            /* Fumée discrète en bas à gauche */
             .smoke {
                 position: absolute;
                 left: 0;
                 bottom: 0;
-                width: 420px;
-                opacity: 0.5;
+                width: 360px;
+                opacity: 0.25;
                 pointer-events: none;
             }
 
-            /* Éclair en décor, en haut à gauche */
-            .lightning {
-                position: absolute;
-                left: 40px;
-                top: 40px;
-                width: 260px;
-                opacity: 0.35;
-                pointer-events: none;
-            }
-
-            /* Bouton qui ouvre le menu */
+            /* Bouton d'ouverture : cadre petit, coins conservés */
             #open_menu {
                 position: absolute;
                 right: 32px;
                 top: 32px;
-                width: 140px;
-                height: 54px;
-                border: none;
-                background: url("../asset/cadre_petit.png") center / 100% 100% no-repeat;
+                width: 150px;
+                height: 52px;
+                padding: 0;
+                border: 20px solid transparent;
+                border-image: url("../asset/cadre_petit.png") 40 fill / 20px stretch;
+                background: transparent;
                 color: #efeae0;
                 font-family: inherit;
-                font-size: 16px;
+                font-size: 15px;
                 font-weight: 700;
-                letter-spacing: 0.1em;
+                letter-spacing: 0.15em;
                 cursor: pointer;
             }
             #open_menu:hover { filter: brightness(1.2); }
 
-            /* Panneau du menu : cadre bleu étendu sur toute la zone */
+            /* Panneau : cadre large, coins conservés (border-image avec tranches de 60 px) */
             #menu {
                 position: absolute;
                 left: 50%;
                 top: 50%;
                 width: 640px;
-                height: 420px;
+                height: 440px;
                 transform: translate(-50%, -50%);
-                background: url("../asset/cadre_large.png") center / 100% 100% no-repeat;
+                box-sizing: border-box;
+                border: 60px solid transparent;
+                border-image: url("../asset/cadre_large.png") 60 fill / 60px stretch;
                 display: none;
                 flex-direction: column;
                 align-items: center;
                 padding: 0;
-                box-sizing: border-box;
             }
             #menu.open { display: flex; }
 
-            /* Bandeau de titre, au-dessus de la zone des boutons */
+            /* Titre : texte simple, sans bloc de fond */
             #menu .title {
-                margin-top: 70px;
+                margin-top: 10px;
                 font-size: 26px;
                 font-weight: 800;
-                letter-spacing: 0.2em;
-                text-shadow: 0 0 12px rgba(159, 183, 209, 0.6);
+                letter-spacing: 0.3em;
+                color: #efeae0;
+                text-shadow: 0 0 14px rgba(159, 183, 209, 0.7);
             }
 
             #menu .buttons {
@@ -85,11 +79,14 @@
                 align-items: center;
             }
 
+            /* Boutons : cadre petit, coins conservés */
             #menu button.option {
                 width: 280px;
                 height: 52px;
-                border: none;
-                background: url("../asset/cadre_petit.png") center / 100% 100% no-repeat;
+                padding: 0;
+                border: 16px solid transparent;
+                border-image: url("../asset/cadre_petit.png") 40 fill / 16px stretch;
+                background: transparent;
                 color: #efeae0;
                 font-family: inherit;
                 font-size: 16px;
@@ -97,42 +94,28 @@
             }
             #menu button.option:hover { filter: brightness(1.25); }
 
-            /* Bouton fermer, en haut à droite du panneau */
+            /* Fermeture : zone transparente posée sur la croix du cadre */
             #close_menu {
                 position: absolute;
-                right: 26px;
-                top: 26px;
-                width: 32px;
-                height: 32px;
+                right: 40px;
+                top: 30px;
+                width: 30px;
+                height: 30px;
+                padding: 0;
                 border: none;
                 background: transparent;
-                color: #efeae0;
-                font-size: 22px;
                 cursor: pointer;
-            }
-
-            /* Titre de section, décor en haut du panneau */
-            .decor_top {
-                position: absolute;
-                left: 50%;
-                top: 10px;
-                width: 320px;
-                transform: translateX(-50%);
-                opacity: 0.8;
-                pointer-events: none;
             }
         </style>
     </head>
     <body>
         <img class="smoke" src="../asset/fumee.png" alt="">
-        <img class="lightning" src="../asset/eclair.png" alt="">
 
         <button id="open_menu" type="button">MENU</button>
 
-        <div id="menu">
-            <img class="decor_top" src="../asset/cadre_titre.png" alt="">
-            <button id="close_menu" type="button" aria-label="Fermer">×</button>
-            <div class="title">MENU</div>
+        <div id="menu" role="dialog" aria-labelledby="menu_title">
+            <button id="close_menu" type="button" aria-label="Fermer"></button>
+            <div class="title" id="menu_title">MENU</div>
             <div class="buttons">
                 <button class="option" type="button">Inventaire</button>
                 <button class="option" type="button">Missions</button>
