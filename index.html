@@ -271,7 +271,7 @@
 <footer>
   <div class="wrap" style="flex-direction: column; gap: 10px;">
     <span class="mono">© PANDORA BLEACH · FAN-PROJECT NON AFFILIÉ À BLEACH NI À NANOS WORLD</span>
-    <span class="mono">This work is based on "Hollow Mask" (<a class="link" href="https://sketchfab.com/3d-models/hollow-mask-0bccc6dd6c8349a2ad50cb958237d522">sketchfab.com</a>) by T-Art (<a class="link" href="https://sketchfab.com/person-x">sketchfab.com/person-x</a>) licensed under <a class="link" href="http://creativecommons.org/licenses/by/4.0/">CC-BY-4.0</a>.</span>
+    <span class="mono">This work is based on "Harribel" (<a class="link" href="https://sketchfab.com/3d-models/harribel-5879ebc7d5004f88b19e78f1d2b023a1">sketchfab.com</a>) by leducgagnetommy (<a class="link" href="https://sketchfab.com/leducgagnetommy">sketchfab.com/leducgagnetommy</a>) licensed under <a class="link" href="http://creativecommons.org/licenses/by/4.0/">CC-BY-4.0</a>.</span>
   </div>
 </footer>
 
@@ -337,16 +337,19 @@ new GLTFLoader().load(
     const s = 3.4 / Math.max(size.x, size.y, size.z);
     model.scale.setScalar(s);
     model.position.set(-center.x * s, -center.y * s, -center.z * s);
-    // Diagnostic et réglage des matériaux : couleurs sRGB, réflexions plus douces
+    // Couleurs sRGB pour les textures et lumière douce sur les matériaux
     model.traverse((o) => {
       if (!o.isMesh) return;
-      const m = o.material;
-      console.log('masque', m.name, 'map:', !!m.map, 'normalMap:', !!m.normalMap);
-      if (m.map) m.map.colorSpace = THREE.SRGBColorSpace;
-      m.envMapIntensity = 0.35;
-      m.needsUpdate = true;
+      if (o.material.map) o.material.map.colorSpace = THREE.SRGBColorSpace;
+      o.material.envMapIntensity = 0.5;
+      o.material.needsUpdate = true;
     });
     holder.add(model);
+
+    // Animation « idle » du modèle, jouée en boucle
+    mixer = new THREE.AnimationMixer(model);
+    const idle = gltf.animations.find((a) => a.name === 'idle');
+    if (idle) mixer.clipAction(idle).play();
   },
   undefined,
   (err) => console.error('Chargement du masque impossible :', err)
@@ -380,12 +383,17 @@ updateScroll();
 
 const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 const clock = new THREE.Clock();
+let mixer = null;
+let elapsed = 0;
 
 function frame() {
-  const t = clock.getElapsedTime();
+  const dt = clock.getDelta();
+  elapsed += dt;
+  const t = elapsed;
+  if (mixer) mixer.update(dt);
   const desktop = window.innerWidth > 860;
   // Le masque tourne lentement et tourne plus vite au défilement
-  holder.rotation.y = (reduce ? 0 : t * 0.2) + scrollRatio * Math.PI * 1.5;
+  holder.rotation.y = (reduce ? 0 : Math.sin(t * 0.4) * 0.35) + scrollRatio * Math.PI * 0.5;
   holder.rotation.x = Math.sin(t * 0.5) * 0.05;
   holder.position.y = (reduce ? 0 : Math.sin(t * 0.8) * 0.1) - scrollRatio * 1.0;
   holder.position.x = desktop ? 2.1 : 0;
