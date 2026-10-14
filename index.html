@@ -404,19 +404,25 @@ new GLTFLoader().load(
     const floorY = s * (box.min.y - center.y) - 0.01;
     const floor = new THREE.Mesh(
       new THREE.CircleGeometry(2.4, 96),
-      new THREE.MeshStandardMaterial({ color: 0x0b0c10, roughness: 0.9, metalness: 0 })
+      new THREE.MeshStandardMaterial({ color: 0x060709, roughness: 0.3, metalness: 0.4 })
     );
     floor.rotation.x = -Math.PI / 2;
     floor.position.y = floorY;
     floor.receiveShadow = true;
     holder.add(floor);
-    const ring = new THREE.Mesh(
-      new THREE.RingGeometry(1.5, 1.53, 128),
-      new THREE.MeshBasicMaterial({ color: ACCENT, transparent: true, opacity: 0.8 })
-    );
-    ring.rotation.x = -Math.PI / 2;
-    ring.position.y = floorY + 0.005;
-    holder.add(ring);
+    // Cercle de kidō : anneaux concentriques qui tournent lentement
+    const sigil = new THREE.Group();
+    sigil.rotation.x = -Math.PI / 2;
+    sigil.position.y = floorY + 0.005;
+    [[0.9, 0.7], [1.5, 0.9], [2.0, 0.5]].forEach(([r, o]) => {
+      const ring = new THREE.Mesh(
+        new THREE.RingGeometry(r, r + 0.012, 160),
+        new THREE.MeshBasicMaterial({ color: ACCENT, transparent: true, opacity: o })
+      );
+      sigil.add(ring);
+    });
+    holder.add(sigil);
+    sigilGroup = sigil;
 
     // Animation « win » jouée une seule fois : sa fin ouvre le site
     mixer = new THREE.AnimationMixer(model);
@@ -470,6 +476,7 @@ const clock = new THREE.Clock();
 let mixer = null;
 let elapsed = 0;
 let introStartAt = null;
+let sigilGroup = null;
 
 function frame() {
   const dt = clock.getDelta();
@@ -483,6 +490,7 @@ function frame() {
   holder.rotation.y = (reduce ? 0 : Math.sin(t * 0.4) * 0.35) + scrollRatio * Math.PI * 0.5;
   holder.rotation.x = Math.sin(t * 0.5) * 0.05;
   holder.position.y = (reduce ? 0 : Math.sin(t * 0.8) * 0.1) - scrollRatio * 1.0;
+  if (sigilGroup) sigilGroup.rotation.z = reduce ? 0 : t * 0.25;
   // Centré pendant l'intro, puis glisse à droite sur ordinateur
   const targetX = introDone && desktop ? 2.1 : 0;
   holder.position.x += (targetX - holder.position.x) * 0.04;
