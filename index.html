@@ -149,6 +149,22 @@
   footer .wrap { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 16px; }
   footer .mono { color: var(--dim); }
 
+  /* Intro : seul le personnage est visible jusqu'à la fin de l'animation */
+  body.intro { overflow: hidden; }
+  body.intro #scene { z-index: 25; }
+  #intro {
+    position: fixed; inset: 0; z-index: 20; background: var(--ink);
+    display: flex; align-items: flex-end; justify-content: flex-end; padding: 32px;
+    transition: opacity 1.2s ease;
+  }
+  #intro.hide { opacity: 0; pointer-events: none; }
+  #intro button {
+    background: none; border: 1px solid var(--paper); color: var(--paper);
+    padding: 10px 18px; cursor: pointer;
+    font-family: "IBM Plex Mono", ui-monospace, monospace; font-size: 13px; letter-spacing: 0.06em;
+  }
+  #intro button:hover { opacity: 0.8; }
+
   @media (max-width: 860px) {
     .wrap { padding: 0 20px; }
     nav.top { padding: 0 20px; }
@@ -168,9 +184,13 @@
   }
 </style>
 </head>
-<body>
+<body class="intro">
 
 <canvas id="scene" aria-hidden="true"></canvas>
+
+<div id="intro">
+  <button id="skip" type="button">PASSER ›</button>
+</div>
 
 <nav class="top">
   <a href="#" class="brand">PANDORA <span>BLEACH</span></a>
@@ -282,6 +302,19 @@ import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 
 const ACCENT = 0xe0562d;
 const canvas = document.getElementById('scene');
+const intro = document.getElementById('intro');
+let introDone = false;
+
+/* Fin de l'intro : le site apparaît */
+function finishIntro() {
+  if (introDone) return;
+  introDone = true;
+  intro.classList.add('hide');
+  document.body.classList.remove('intro');
+  setTimeout(() => intro.remove(), 1300);
+}
+document.getElementById('skip').addEventListener('click', finishIntro);
+setTimeout(finishIntro, 20000); // sécurité : jamais bloqué plus de 20 s
 
 /* ---------- Apparitions au défilement ---------- */
 const io = new IntersectionObserver((entries) => {
@@ -295,6 +328,7 @@ try {
   renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
 } catch (err) {
   canvas.classList.add('off');
+  finishIntro();
   throw err;
 }
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
@@ -346,13 +380,24 @@ new GLTFLoader().load(
     });
     holder.add(model);
 
-    // Animation « idle » du modèle, jouée en boucle
+    // Animation « win » jouée une seule fois : sa fin ouvre le site
     mixer = new THREE.AnimationMixer(model);
-    const idle = gltf.animations.find((a) => a.name === 'idle');
-    if (idle) mixer.clipAction(idle).play();
+    const win = gltf.animations.find((a) => a.name === 'win');
+    if (win) {
+      const action = mixer.clipAction(win);
+      action.setLoop(THREE.LoopOnce, 1);
+      action.clampWhenFinished = true;
+      mixer.addEventListener('finished', finishIntro);
+      action.play();
+    } else {
+      finishIntro();
+    }
   },
   undefined,
-  (err) => console.error('Chargement du masque impossible :', err)
+  (err) => {
+    console.error('Chargement du personnage impossible :', err);
+    finishIntro();
+  }
 );
 
 /* Particules : reiatsu qui monte autour du masque */
@@ -396,7 +441,9 @@ function frame() {
   holder.rotation.y = (reduce ? 0 : Math.sin(t * 0.4) * 0.35) + scrollRatio * Math.PI * 0.5;
   holder.rotation.x = Math.sin(t * 0.5) * 0.05;
   holder.position.y = (reduce ? 0 : Math.sin(t * 0.8) * 0.1) - scrollRatio * 1.0;
-  holder.position.x = desktop ? 2.1 : 0;
+  // Centré pendant l'intro, puis glisse à droite sur ordinateur
+  const targetX = introDone && desktop ? 2.1 : 0;
+  holder.position.x += (targetX - holder.position.x) * 0.04;
   particles.rotation.y = reduce ? 0 : t * 0.04;
   renderer.render(scene, camera);
   requestAnimationFrame(frame);
