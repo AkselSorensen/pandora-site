@@ -156,3 +156,16 @@ end
 function Toast(text)
     main_hud:CallEvent("Toast", text)
 end
+
+-- Menu pause : affiché ou caché
+function ShowPause()
+    main_hud:CallEvent("ShowPause")
+end
+
+function HidePause()
+    main_hud:CallEvent("HidePause")
+end
+
+-- Les boutons du menu pause envoient "PauseAction" (resume, help, quit) depuis la page.
+-- Pour recevoir ces choix côté Lua, il faut la fonction de réception de WebUI documentée
+-- par nanos world : à vérifier dans la doc avant de brancher les boutons.

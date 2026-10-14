@@ -79,6 +79,14 @@
             <div class="hot" data-hot="4"><span class="num">5</span><span class="label">—</span></div>
         </div>
 
+        <!-- Menu pause : au centre, caché par défaut -->
+        <div id="pause" class="hidden">
+            <div class="pause_title">PAUSE</div>
+            <button type="button" onclick="Events.Call('PauseAction', 'resume')">Reprendre</button>
+            <button type="button" onclick="Events.Call('PauseAction', 'help')">Aide des commandes</button>
+            <button type="button" onclick="Events.Call('PauseAction', 'quit')">Quitter le serveur</button>
+        </div>
+
         <!-- Chat : bas gauche, au-dessus de la vie -->
         <div id="chat">
             <div id="chat_log"></div>

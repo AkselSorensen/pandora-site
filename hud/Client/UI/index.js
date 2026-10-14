@@ -149,6 +149,14 @@ Events.Subscribe("ShowScoreboard", function(show) {
     document.getElementById("scoreboard").classList.toggle("hidden", !show);
 });
 
+// Menu pause : affiché ou caché par Lua via ShowPause et HidePause
+Events.Subscribe("ShowPause", function() {
+    document.getElementById("pause").classList.remove("hidden");
+});
+Events.Subscribe("HidePause", function() {
+    document.getElementById("pause").classList.add("hidden");
+});
+
 // Notification : texte qui apparaît puis disparaît, envoyé par Lua via Toast
 Events.Subscribe("Toast", function(text) {
     const box = document.getElementById("toasts");

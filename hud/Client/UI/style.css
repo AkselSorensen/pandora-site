@@ -458,6 +458,40 @@ html, body {
     color: var(--spirit);
 }
 
+/* Menu pause : au centre, voile sombre */
+#pause {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 14px;
+    background: rgba(11, 15, 26, 0.7);
+    pointer-events: auto;
+}
+#pause.hidden { display: none; }
+.pause_title {
+    font-size: 48px;
+    font-weight: 800;
+    letter-spacing: 0.3em;
+    margin-bottom: 20px;
+    color: var(--ivory);
+}
+#pause button {
+    width: 320px;
+    padding: 14px;
+    background: var(--panel);
+    border: 1px solid var(--spirit);
+    color: var(--ivory);
+    font-family: inherit;
+    font-size: 16px;
+    cursor: pointer;
+}
+#pause button:hover {
+    background: rgba(159, 183, 209, 0.2);
+}
+
 /* Halo de reiatsu : bords rouges quand la vie est basse */
 #vignette {
     position: absolute;
