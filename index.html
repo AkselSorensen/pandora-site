@@ -1,0 +1,396 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pandora Bleach</title>
+<meta name="description" content="Pandora Bleach : serveur roleplay nanos world inspiré de Bleach. Deviens Shinigami, combats les Hollows et protège le monde des vivants.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Shippori+Mincho+B1:wght@500;700;800&family=IBM+Plex+Sans:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<script type="importmap">
+{
+  "imports": {
+    "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+    "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
+  }
+}
+</script>
+<style>
+  :root {
+    --accent: #e0562d;
+    --ink: #050608;
+    --paper: #eceae4;
+    --dim: #8f8c84;
+    --line: rgba(236, 234, 228, 0.12);
+    color-scheme: dark;
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0; background: var(--ink); color: var(--paper);
+    font-family: "IBM Plex Sans", system-ui, sans-serif; line-height: 1.6;
+    overflow-x: hidden;
+  }
+  /* Vignette et lueur de braise au-dessus de la scène 3D */
+  body::before {
+    content: ""; position: fixed; inset: 0; z-index: 0; pointer-events: none;
+    background:
+      radial-gradient(ellipse at 70% 40%, rgba(224, 86, 45, 0.14), transparent 55%),
+      radial-gradient(ellipse at 50% 50%, transparent 40%, rgba(0, 0, 0, 0.85) 100%);
+  }
+  a { color: inherit; text-decoration: none; }
+  a:hover { opacity: 0.8; }
+  .display { font-family: "Shippori Mincho B1", serif; font-weight: 800; letter-spacing: -0.01em; }
+  .mono { font-family: "IBM Plex Mono", ui-monospace, monospace; font-size: 13px; letter-spacing: 0.06em; }
+  .wrap { max-width: 1200px; margin: 0 auto; padding: 0 40px; position: relative; z-index: 1; }
+
+  /* Scène 3D en arrière-plan */
+  #scene {
+    position: fixed; inset: 0; width: 100%; height: 100%;
+    z-index: 0; pointer-events: none;
+  }
+  #scene.off { display: none; }
+
+  /* Barre du haut */
+  nav.top {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 10; height: 76px;
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 0 40px; backdrop-filter: blur(8px);
+    background: rgba(5, 6, 8, 0.45);
+  }
+  nav.top .brand { font-family: "Shippori Mincho B1", serif; font-weight: 800; font-size: 19px; }
+  nav.top .brand span { color: var(--accent); }
+  nav.top .links { display: flex; gap: 32px; color: var(--dim); }
+  nav.top .btn-line { border: 1px solid var(--paper); padding: 10px 18px; }
+
+  /* Héro : texte à gauche, masque à droite */
+  .hero {
+    min-height: 100vh; display: flex; flex-direction: column; justify-content: center;
+    position: relative; z-index: 1; padding-top: 76px;
+  }
+  .hero .wrap { max-width: 1200px; }
+  .hero h1 {
+    font-size: clamp(60px, 9vw, 150px); line-height: 0.92; margin: 0;
+    font-family: "Shippori Mincho B1", serif; font-weight: 800;
+  }
+  .hero h1 .accent { color: var(--accent); }
+  .hero .lede { margin: 36px 0 0; max-width: 480px; font-size: 19px; color: #b8b5ad; }
+  .eyebrow { color: var(--accent); margin: 0 0 36px; }
+
+  .cta {
+    display: inline-block; background: var(--accent); color: #050608;
+    padding: 20px 34px; font-weight: 600; font-size: 17px;
+  }
+  .cta:hover { opacity: 1; filter: brightness(1.08); }
+  .link { text-decoration: underline; text-underline-offset: 6px; }
+
+  .section {
+    padding: 160px 0; border-top: 1px solid var(--line);
+    position: relative; z-index: 1;
+  }
+  .section h2 { font-size: clamp(44px, 7vw, 100px); line-height: 1; margin: 0 0 64px; }
+  .label { color: var(--accent); margin: 0 0 20px; }
+
+  /* Apparitions au défilement */
+  .reveal { opacity: 0; transform: translateY(60px); transition: opacity 1s ease, transform 1s cubic-bezier(.2,.7,.1,1); }
+  .reveal.in { opacity: 1; transform: none; }
+
+  .statement {
+    font-family: "Shippori Mincho B1", serif; font-weight: 700;
+    font-size: clamp(32px, 4.6vw, 62px); line-height: 1.25; margin: 0;
+    max-width: 1000px;
+  }
+
+  /* Missions */
+  .missions { display: grid; gap: 0; }
+  .mission {
+    display: grid; grid-template-columns: 120px 1fr 1fr; gap: 40px; align-items: baseline;
+    padding: 56px 0; border-top: 1px solid var(--line);
+  }
+  .mission:last-child { border-bottom: 1px solid var(--line); }
+  .mission .num { font-family: "Shippori Mincho B1", serif; font-size: 44px; color: var(--accent); }
+  .mission h3 { font-family: "Shippori Mincho B1", serif; font-size: 34px; margin: 0; }
+  .mission p { margin: 0; color: #b8b5ad; font-size: 17px; }
+
+  /* Divisions */
+  .divs { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; background: var(--line); border: 1px solid var(--line); }
+  .div-card {
+    background: var(--ink); padding: 40px; min-height: 220px;
+    display: flex; flex-direction: column; justify-content: flex-end;
+    transition: background 0.5s, transform 0.5s;
+  }
+  .div-card:hover { background: #0c0d11; transform: translateY(-6px); }
+  .div-card h4 { font-family: "Shippori Mincho B1", serif; font-size: 26px; margin: 12px 0 8px; }
+  .div-card p { margin: 0; color: #a9a69e; font-size: 15px; }
+
+  /* Agenda */
+  .event {
+    display: grid; grid-template-columns: 160px 1fr; gap: 32px; align-items: baseline;
+    padding: 36px 0; border-top: 1px solid var(--line);
+  }
+  .event:last-child { border-bottom: 1px solid var(--line); }
+  .event .when { font-family: "Shippori Mincho B1", serif; font-size: 34px; color: var(--accent); }
+  .event .what { font-size: 24px; font-weight: 500; }
+
+  /* FAQ */
+  details { border-top: 1px solid var(--line); padding: 26px 0; }
+  details:last-child { border-bottom: 1px solid var(--line); }
+  summary { cursor: pointer; font-size: 21px; font-weight: 500; list-style: none; }
+  summary::-webkit-details-marker { display: none; }
+  summary::after { content: "+"; float: right; color: var(--accent); font-family: "IBM Plex Mono", monospace; }
+  details[open] summary::after { content: "–"; }
+  details p { color: #a9a69e; margin: 14px 0 0; }
+
+  .final { min-height: 100vh; display: flex; align-items: center; }
+  .final h2 { font-size: clamp(64px, 12vw, 180px); line-height: 0.9; margin: 0 0 64px; }
+  .final .row { display: flex; gap: 32px; align-items: center; flex-wrap: wrap; }
+
+  footer { border-top: 1px solid var(--line); padding: 40px 0; position: relative; z-index: 1; }
+  footer .wrap { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 16px; }
+  footer .mono { color: var(--dim); }
+
+  @media (max-width: 860px) {
+    .wrap { padding: 0 20px; }
+    nav.top { padding: 0 20px; }
+    nav.top .links { display: none; }
+    .hero { text-align: center; align-items: center; }
+    .hero .wrap { display: flex; flex-direction: column; align-items: center; }
+    .hero .lede { margin-left: auto; margin-right: auto; }
+    .mission { grid-template-columns: 1fr; gap: 12px; }
+    .divs { grid-template-columns: 1fr 1fr; }
+    .event { grid-template-columns: 1fr; gap: 8px; }
+  }
+  @media (max-width: 560px) {
+    .divs { grid-template-columns: 1fr; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .reveal { opacity: 1; transform: none; transition: none; }
+  }
+</style>
+</head>
+<body>
+
+<canvas id="scene" aria-hidden="true"></canvas>
+
+<nav class="top">
+  <a href="#" class="brand">PANDORA <span>BLEACH</span></a>
+  <div class="links mono">
+    <a href="#univers">Univers</a>
+    <a href="#missions">Expérience</a>
+    <a href="#divisions">Divisions</a>
+    <a href="#agenda">Agenda</a>
+    <a href="#faq">Infos</a>
+  </div>
+  <a href="#rejoindre" class="mono btn-line">REJOINDRE</a>
+</nav>
+
+<header class="hero">
+  <div class="wrap">
+    <p class="mono eyebrow">SERVEUR ROLEPLAY · NANOS WORLD</p>
+    <h1>Deviens<br><span class="accent">Shinigami.</span></h1>
+    <p class="lede">Protège le monde des vivants, purifie les Hollows et écris ton histoire dans la Soul Society.</p>
+    <div style="margin-top: 56px;"><a href="#rejoindre" class="cta">Rejoindre le serveur</a></div>
+    <p class="mono" style="color: var(--dim); margin-top: 96px;">FAIS DÉFILER ↓</p>
+  </div>
+</header>
+
+<section id="univers" class="section">
+  <div class="wrap">
+    <p class="statement reveal">La Soul Society veille sur les âmes. Les Hollows rôdent dans le monde des vivants. <span style="color: var(--accent);" class="reveal">Et toi, de quel côté seras-tu ?</span></p>
+  </div>
+</section>
+
+<section id="missions" class="section">
+  <div class="wrap">
+    <p class="mono label reveal">EXPÉRIENCE</p>
+    <h2 class="display reveal">Ce qui t'attend.</h2>
+    <div class="missions">
+      <div class="mission reveal">
+        <span class="num">01</span>
+        <h3>Patrouille le monde des vivants.</h3>
+        <p>Rejoins une patrouille, repère les signes de Hollows et protège les âmes égarées. Chaque mission fait avancer ta division.</p>
+      </div>
+      <div class="mission reveal">
+        <span class="num">02</span>
+        <h3>Ton sabre répond à ta volonté.</h3>
+        <p>Entraîne-toi, débloque des capacités et découvre la forme scellée de ton zanpakuto.</p>
+      </div>
+      <div class="mission reveal">
+        <span class="num">03</span>
+        <h3>Affronte les plus puissants.</h3>
+        <p>Les boss se cachent dans les zones sombres. Combats en équipe, et prouve ta valeur devant ton capitaine.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="divisions" class="section">
+  <div class="wrap">
+    <p class="mono label reveal">DIVISIONS</p>
+    <h2 class="display reveal">Choisis ton camp.</h2>
+    <div class="divs reveal">
+      <div class="div-card"><span class="mono" style="color: var(--dim);">DIVISION 1</span><h4>Commandement</h4><p>Diriger, décider, protéger le Gotei.</p></div>
+      <div class="div-card"><span class="mono" style="color: var(--dim);">DIVISION 4</span><h4>Soins</h4><p>Soigner les blessés, sauver les âmes.</p></div>
+      <div class="div-card"><span class="mono" style="color: var(--dim);">DIVISION 10</span><h4>Glace</h4><p>Maîtriser le froid et la stratégie.</p></div>
+      <div class="div-card"><span class="mono" style="color: var(--dim);">DIVISION 11</span><h4>Combat</h4><p>Le front, les duels, la force brute.</p></div>
+      <div class="div-card"><span class="mono" style="color: var(--dim);">DIVISION 12</span><h4>Technologie</h4><p>Recherche, équipement, analyse.</p></div>
+      <div class="div-card"><span class="mono" style="color: var(--dim);">DIVISION 13</span><h4>Protection des âmes</h4><p>Escorter, guider, rassurer.</p></div>
+    </div>
+  </div>
+</section>
+
+<section id="agenda" class="section">
+  <div class="wrap">
+    <p class="mono label reveal">AGENDA</p>
+    <h2 class="display reveal">Un événement chaque semaine.</h2>
+    <div class="event reveal"><span class="when">20 oct.</span><span class="what">Tournoi des capitaines — duels en arène</span></div>
+    <div class="event reveal"><span class="when">27 oct.</span><span class="what">Raid de Hollows — tout le serveur mobilisé</span></div>
+    <div class="event reveal"><span class="when">03 nov.</span><span class="what">Soirée roleplay — intrigues à la Soul Society</span></div>
+  </div>
+</section>
+
+<section id="faq" class="section">
+  <div class="wrap reveal">
+    <p class="mono label">INFOS</p>
+    <details open><summary>Faut-il de l'expérience pour rejoindre ?</summary><p>Non. Tout le monde commence recrue, et l'équipe aide les nouveaux à prendre leurs marques.</p></details>
+    <details><summary>Le serveur est-il gratuit ?</summary><p>Oui, l'accès est gratuit pour tous les joueurs.</p></details>
+    <details><summary>Quelles sont les règles ?</summary><p>Respect des autres, roleplay immersif, aucun griefing ni exploitation de bugs. Les consignes du staff s'appliquent à tous.</p></details>
+  </div>
+</section>
+
+<section id="rejoindre" class="section final">
+  <div class="wrap reveal">
+    <h2 class="display">Ton parcours<br><span style="color: var(--accent);">commence ici.</span></h2>
+    <div class="row">
+      <a href="#" class="cta">Rejoindre le serveur</a>
+      <a href="#" class="mono link">Rejoindre le Discord →</a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap" style="flex-direction: column; gap: 10px;">
+    <span class="mono">© PANDORA BLEACH · FAN-PROJECT NON AFFILIÉ À BLEACH NI À NANOS WORLD</span>
+    <span class="mono">This work is based on "Hollow Mask" (<a class="link" href="https://sketchfab.com/3d-models/hollow-mask-0bccc6dd6c8349a2ad50cb958237d522">sketchfab.com</a>) by T-Art (<a class="link" href="https://sketchfab.com/person-x">sketchfab.com/person-x</a>) licensed under <a class="link" href="http://creativecommons.org/licenses/by/4.0/">CC-BY-4.0</a>.</span>
+  </div>
+</footer>
+
+<script type="module">
+import * as THREE from 'three';
+import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
+import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+
+const ACCENT = 0xe0562d;
+const canvas = document.getElementById('scene');
+
+/* ---------- Apparitions au défilement ---------- */
+const io = new IntersectionObserver((entries) => {
+  for (const e of entries) if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); }
+}, { threshold: 0.15 });
+document.querySelectorAll('.reveal').forEach((el) => io.observe(el));
+
+/* ---------- Scène 3D ---------- */
+let renderer;
+try {
+  renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
+} catch (err) {
+  canvas.classList.add('off');
+  throw err;
+}
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+renderer.setSize(window.innerWidth, window.innerHeight, false);
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure = 1.15;
+
+const scene = new THREE.Scene();
+scene.fog = new THREE.FogExp2(0x050608, 0.06);
+const camera = new THREE.PerspectiveCamera(35, window.innerWidth / window.innerHeight, 0.1, 100);
+camera.position.set(0, 0, 8);
+
+const pmrem = new THREE.PMREMGenerator(renderer);
+scene.environment = pmrem.fromScene(new RoomEnvironment(), 0.04).texture;
+
+/* Lumières : clé blanche froide, contre-jour couleur braise, rasante par le haut */
+const key = new THREE.DirectionalLight(0xdfe8ff, 1.8);
+key.position.set(2.5, 4, 5);
+scene.add(key);
+const rim = new THREE.PointLight(ACCENT, 60, 14);
+rim.position.set(-2.5, 1.2, -1.5);
+scene.add(rim);
+const top = new THREE.SpotLight(0xffffff, 40, 20, Math.PI / 7, 0.6);
+top.position.set(0, 6, 3);
+top.target.position.set(0, 0, 0);
+scene.add(top, top.target);
+
+/* Groupe qui porte le masque : c'est lui qu'on fait tourner et déplacer */
+const holder = new THREE.Group();
+scene.add(holder);
+
+/* Masque chargé depuis models/scene.gltf, mis à l'échelle et centré automatiquement */
+new GLTFLoader().load(
+  'models/scene.gltf',
+  (gltf) => {
+    const model = gltf.scene;
+    const box = new THREE.Box3().setFromObject(model);
+    const size = box.getSize(new THREE.Vector3());
+    const center = box.getCenter(new THREE.Vector3());
+    const s = 3.4 / Math.max(size.x, size.y, size.z);
+    model.scale.setScalar(s);
+    model.position.set(-center.x * s, -center.y * s, -center.z * s);
+    holder.add(model);
+  },
+  undefined,
+  (err) => console.error('Chargement du masque impossible :', err)
+);
+
+/* Particules : reiatsu qui monte autour du masque */
+const COUNT = 900;
+const positions = new Float32Array(COUNT * 3);
+for (let i = 0; i < COUNT; i++) {
+  const r = 2.6 + Math.random() * 4.2;
+  const t = Math.random() * Math.PI * 2;
+  positions[i * 3] = Math.cos(t) * r;
+  positions[i * 3 + 1] = (Math.random() - 0.5) * 8;
+  positions[i * 3 + 2] = Math.sin(t) * r * 0.5 - 1;
+}
+const particleGeo = new THREE.BufferGeometry();
+particleGeo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+const particles = new THREE.Points(particleGeo, new THREE.PointsMaterial({
+  color: ACCENT, size: 0.03, transparent: true, opacity: 0.8, blending: THREE.AdditiveBlending, depthWrite: false
+}));
+scene.add(particles);
+
+/* ---------- Animation ---------- */
+let scrollRatio = 0;
+function updateScroll() {
+  const max = document.documentElement.scrollHeight - window.innerHeight;
+  scrollRatio = max > 0 ? window.scrollY / max : 0;
+}
+window.addEventListener('scroll', updateScroll, { passive: true });
+updateScroll();
+
+const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+const clock = new THREE.Clock();
+
+function frame() {
+  const t = clock.getElapsedTime();
+  const desktop = window.innerWidth > 860;
+  // Le masque tourne lentement et tourne plus vite au défilement
+  holder.rotation.y = (reduce ? 0 : t * 0.2) + scrollRatio * Math.PI * 1.5;
+  holder.rotation.x = Math.sin(t * 0.5) * 0.05;
+  holder.position.y = (reduce ? 0 : Math.sin(t * 0.8) * 0.1) - scrollRatio * 1.0;
+  holder.position.x = desktop ? 2.1 : 0;
+  particles.rotation.y = reduce ? 0 : t * 0.04;
+  renderer.render(scene, camera);
+  requestAnimationFrame(frame);
+}
+frame();
+
+window.addEventListener('resize', () => {
+  renderer.setSize(window.innerWidth, window.innerHeight, false);
+  camera.aspect = window.innerWidth / window.innerHeight;
+  camera.updateProjectionMatrix();
+});
+</script>
+</body>
+</html>
