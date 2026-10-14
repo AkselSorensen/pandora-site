@@ -27,6 +27,6 @@ jobs:
           COOLIFY_TOKEN: ${{ secrets.COOLIFY_TOKEN }}
           COOLIFY_APP_UUID: ${{ secrets.COOLIFY_APP_UUID }}
         run: |
-          curl --fail --silent --show-error \
+          curl --fail --silent --show-error -X POST \
             -H "Authorization: Bearer $COOLIFY_TOKEN" \
             "http://100.79.86.29:8000/api/v1/deploy?uuid=$COOLIFY_APP_UUID&force=true"
